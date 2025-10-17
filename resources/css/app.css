@@ -1,0 +1,212 @@
+.c_tampilan-awal-frame {
+    width: 100%;
+    overflow: hidden;
+    max-width: 1366px;
+    box-sizing: border-box;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #fff;
+}
+
+.c_tampilan-awal-rectangle10,
+.c_tampilan-awal-rectangle11 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 1366px;
+}
+
+.c_tampilan-awal-rectangle11 {
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.c_tampilan-awal-rectangle12 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 241px;
+    transform: rotate(180deg);
+}
+
+.c_tampilan-awal-text10 {
+    width: 100%;
+    max-width: 104px;
+    margin-top: 0;
+    min-height: 28px;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.c_tampilan-awal-text11 {
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    margin-top: 0;
+    text-align: left;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.c_tampilan-awal-group1 {
+    width: 100%;
+    max-width: 111px;
+    box-sizing: border-box;
+    flex-direction: column;
+}
+
+.c_tampilan-awal-rectangle13 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 111px;
+    border-radius: 31px 31px 31px 31px;
+}
+
+.c_tampilan-awal-text12 {
+    width: 100%;
+    max-width: 77px;
+    margin-top: 0;
+    min-height: 28px;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.c_tampilan-awal-text13 {
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    margin-top: 0;
+    text-align: left;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.c_tampilan-awal-rectangle14 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 129px;
+    border-radius: 49px 49px 49px 49px;
+}
+
+.c_tampilan-awal-text14 {
+    width: 100%;
+    max-width: 554px;
+    margin-top: 0;
+    min-height: 225px;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.c_tampilan-awal-text15 {
+    color: #fffefe;
+    font-size: 48px;
+    font-style: normal;
+    margin-top: 0;
+    text-align: left;
+    font-family: "Playfair", serif;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.c_tampilan-awal-group2 {
+    width: 100%;
+    max-width: 642px;
+    box-sizing: border-box;
+    flex-direction: column;
+}
+
+.c_tampilan-awal-rectangle15 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 642px;
+    border-top: 90px solid #1d140d;
+    border-left: 90px solid #1d140d;
+    border-right: 90px solid #1d140d;
+    border-bottom: 90px solid #1d140d;
+    border-radius: 1px 1px 1px 1px;
+}
+
+.c_tampilan-awal-rectangle16,
+.c_tampilan-awal-rectangle17,
+.c_tampilan-awal-rectangle18,
+.c_tampilan-awal-rectangle19 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 321px;
+}
+
+.c_tampilan-awal-text16 {
+    width: 100%;
+    max-width: 257px;
+    margin-top: 0;
+    min-height: 31px;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.c_tampilan-awal-text17 {
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    margin-top: 0;
+    text-align: left;
+    font-family: "Rowdies", sans-serif;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.c_tampilan-awal-text18 {
+    width: 100%;
+    max-width: 590px;
+    margin-top: 0;
+    min-height: 78px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.c_tampilan-awal-text19 {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    margin-top: 0;
+    text-align: center;
+    font-family: "Abel", sans-serif;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.c_tampilan-awal-rectangle20 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 133px;
+    transform: rotate(180deg);
+}

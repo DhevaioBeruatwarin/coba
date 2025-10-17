@@ -1,0 +1,199 @@
+/* RESET & BASE STYLE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #1b0c00;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(27, 12, 0, 0.95);
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+/* Tombol Login */
+.signup-btn {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+}
+
+.singup-btn:hover {
+    background: #fff;
+    color: #1b0c00;
+}
+
+/* Tombol Sign Up */
+.login-btn {
+    background: linear-gradient(45deg, #ff6a00, #ffcc00);
+    color: #1b0c00;
+    box-shadow: 0 0 12px rgba(255, 200, 50, 0.6);
+    text-decoration: none; /* hapus underline */
+}
+
+.login-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 200, 50, 0.9);
+}
+
+/* HERO SECTION */
+.hero {
+    height: 100vh;
+    width: 100%;
+    background: url("../assets/bg.jpg") center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 120px; /* kasih ruang untuk navbar */
+    position: relative;
+}
+
+.hero-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 80px;
+}
+
+/* TEKS KIRI */
+.text-left {
+    max-width: 600px;
+}
+
+.text-left h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    color: #ffcc00;
+}
+
+.text-left p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* GRID GAMBAR */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.image-grid img {
+    width: 220px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.4s ease;
+}
+
+.image-grid img:hover {
+    transform: scale(1.05);
+}
+
+/* BUNGA */
+.bunga {
+    position: absolute;
+    bottom: 0;
+    left: -150px; /* geser ke kiri biar nggak menimpa text */
+    width: 450px;
+    z-index: 0;
+    opacity: 0.85;
+}
+
+.bunga img {
+    width: 100%;
+    height: auto;
+    transform: scaleX(-1); /* flip mirror */
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .image-grid {
+        grid-template-columns: repeat(2, 150px);
+        grid-template-rows: repeat(2, 150px);
+    }
+
+    .text-left h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 30px;
+    }
+
+    .hero {
+        padding-top: 100px;
+    }
+
+    .text-left h1 {
+        font-size: 1.8rem;
+    }
+
+    .text-left p {
+        font-size: 0.9rem;
+    }
+
+    .image-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .bunga {
+        width: 300px;
+        left: -100px;
+        bottom: -40px;
+    }
+}
