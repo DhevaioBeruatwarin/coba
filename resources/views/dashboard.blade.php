@@ -30,11 +30,15 @@
             </div>
             <video id="camera-video" autoplay playsinline></video>
             <div class="camera-controls">
-                <button id="capture-btn" class="capture-btn">📸 Ambil Foto</button>
-                <button id="stop-camera-btn" class="stop-btn">Tutup Kamera</button>
+                <button id="capture-btn" class="capture-btn">📸 Capture Photo</button>
+                <button id="stop-camera-btn" class="stop-btn">✕ Close</button>
+            </div>
+            <div class="camera-status">
+                <div class="status-dot"></div>
+                <span>Camera Active</span>
             </div>
             <canvas id="camera-canvas" style="display: none;"></canvas>
-            <img id="captured-image" style="display: none; max-width: 100%; margin-top: 10px;">
+            <img id="captured-image" style="display: none; max-width: 100%; margin-top: 24px;">
         </div>
     </div>
 
@@ -488,10 +492,20 @@
                         ctx.drawImage(video, 0, 0);
                         
                         const image = document.getElementById('captured-image');
-                        image.src = canvas.toDataURL('image/jpeg');
+                        const photoData = canvas.toDataURL('image/jpeg');
+                        image.src = photoData;
                         image.style.display = 'block';
                         
-                        alert('✅ Foto berhasil diambil!');
+                        // Download otomatis
+                        const link = document.createElement('a');
+                        link.href = photoData;
+                        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                        link.download = `foto-${timestamp}.jpg`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        alert('✅ Foto berhasil diambil dan diunduh!');
                     } catch (error) {
                         console.error('Error:', error);
                         alert('❌ Error mengambil foto: ' + error.message);
