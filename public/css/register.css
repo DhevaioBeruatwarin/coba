@@ -117,10 +117,12 @@ input::placeholder {
     color: #999;
 }
 
-.btn-join {
+.join {
     margin-top: 25px;
     padding: 12px 24px;
     background-color: #ff7a00;
+    text-align: center;
+    text-decoration: none;
     color: white;
     border: none;
     border-radius: 5px;
@@ -132,13 +134,13 @@ input::placeholder {
     letter-spacing: 0.5px;
 }
 
-.btn-join:hover {
+.join:hover {
     background-color: #ff9d33;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
 }
 
-.btn-join:active {
+.join:active {
     transform: translateY(0);
 }
 

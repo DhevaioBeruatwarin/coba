@@ -55,12 +55,12 @@
           <label for="role">Role</label>
           <select id="role">
             <option value="">Select role</option>
-            <option value="artist">Artist</option>
-            <option value="buyer">Buyer</option>
+            <option value="seniman">Seniman</option>
+            <option value="pembeli">Pembeli</option>
           </select>
         </div>
 
-        <button type="submit" class="btn-join">Join us</button>
+        <a class="join"href={{url("/login") }}>Join us</a>
       </form>
 
       <!-- Decorative top ornament -->

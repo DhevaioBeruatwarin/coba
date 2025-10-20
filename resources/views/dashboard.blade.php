@@ -30,8 +30,8 @@
             </div>
             <video id="camera-video" autoplay playsinline></video>
             <div class="camera-controls">
-                <button id="capture-btn" class="capture-btn">📸 Capture Photo</button>
-                <button id="stop-camera-btn" class="stop-btn">✕ Close</button>
+                <button id="capture-btn" class="capture-btn">Capture Photo</button>
+                <button id="stop-camera-btn" class="stop-btn">Close</button>
             </div>
             <div class="camera-status">
                 <div class="status-dot"></div>
@@ -445,7 +445,7 @@
                     cameraStream = stream;
                     if (video) {
                         video.srcObject = stream;
-                        video.onloadedmetadata = function() {
+                        video.onloadedmetadata = function() {  
                             video.play();
                         };
                     }
