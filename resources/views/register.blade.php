@@ -22,45 +22,47 @@
     <div class="right-section">
       <h2>Sign Up</h2>
 
-      
       <img class="ornament-bottom" src="{{ asset('assets/w.png') }}" alt="bottom decoration">
 
-      <form>
+      <!-- FORM REGISTRASI -->
+      <form action="{{ url('/register') }}" method="POST">
+        @csrf
+
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter your username">
+          <label for="nama">Username</label>
+          <input type="text" id="nama" name="nama" placeholder="Enter your username" required>
         </div>
 
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="Enter your email">
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
 
         <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" placeholder="Enter your phone number">
+          <label for="no_hp">Phone Number</label>
+          <input type="tel" id="no_hp" name="no_hp" placeholder="Enter your phone number" required>
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter password">
+          <input type="password" id="password" name="password" placeholder="Enter password" required>
         </div>
 
         <div class="form-group">
-          <label for="confirm-password">Confirm Password</label>
-          <input type="password" id="confirm-password" placeholder="Confirm password">
+          <label for="password_confirmation">Confirm Password</label>
+          <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm password" required>
         </div>
 
         <div class="form-group">
           <label for="role">Role</label>
-          <select id="role">
+          <select id="role" name="role" required>
             <option value="">Select role</option>
             <option value="seniman">Seniman</option>
             <option value="pembeli">Pembeli</option>
           </select>
         </div>
 
-        <a class="join"href={{url("/login") }}>Join us</a>
+        <button type="submit" class="join">Join us</button>
       </form>
 
       <!-- Decorative top ornament -->
