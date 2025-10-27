@@ -31,26 +31,26 @@ body {
     z-index: 1;
 }
 
-.left-content {
+.informasi {
     max-width: 500px;
 }
 
-.left-content h1 {
-    font-size: 56px;
+.informasi h1 {
+    font-size: 90px;
     font-weight: 700;
     margin-bottom: 30px;
     line-height: 1.2;
     letter-spacing: -1px;
 }
 
-.left-content p {
+.informasi p {
     font-size: 15px;
     line-height: 1.8;
     opacity: 0.95;
     font-weight: 300;
 }
 
-/* RIGHT SECTION */
+
 .right-section {
     flex: 1;
     background-color: rgb(35,17,5);
@@ -66,10 +66,11 @@ body {
 
 .right-section h2 {
     text-align: center;
-    font-size: 32px;
-    font-weight: 600;
-    margin-bottom: 40px;
+    font-size: 65px;
+    font-weight: 700;
+    margin-bottom: 38px;
     letter-spacing: 0.5px;
+    color: white;
 }
 
 form {
@@ -80,7 +81,7 @@ form {
     z-index: 1; 
 }
 
-.form-group {
+.formGroup {
     display: flex;
     flex-direction: column;
     margin-bottom: 18px;
@@ -94,30 +95,28 @@ label {
     letter-spacing: 0.3px;
 }
 
-input,
-select {
-    padding: 12px 14px;
-    border: none;
-    outline: none;
-    border-radius: 3px;
-    background-color: #f5f5f5;
-    color: #333;
-    font-size: 14px;
-    font-family: inherit;
-    transition: background-color 0.2s ease;
+.rememberMe{
+  display: flex;
+  align-items: center;  
 }
 
-input:focus,
-select:focus {
-    background-color: #ffffff;
-    box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.2);
+.rememberMe label{
+    padding-left: 8px;
+    padding-bottom: 0px;
+    padding-top: 5px;
 }
+
+input{
+    height: 49PX;
+}
+
+
 
 input::placeholder {
     color: #999;
 }
 
-.join {
+.login {
     margin-top: 25px;
     padding: 12px 24px;
     background-color: #ff7a00;
@@ -134,27 +133,65 @@ input::placeholder {
     letter-spacing: 0.5px;
 }
 
-.join:hover {
+.login:hover {
     background-color: #ff9d33;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
 }
 
-.join:active {
+.login:active {
     transform: translateY(0);
 }
 
 /* DECORATIVE ORNAMENTS */
 .ornament-top {
     position: absolute;
-    top: 20px;
-    right: 30px;
-    width: 100px;
+    top: -400px;
+    right: -124px;
+    width: 200px;
     height: auto;
     opacity: 0.9;
     z-index: 2;
+    transform: rotate(-45deg);
 }
 
+.monikaCantik{
+    position: absolute;
+    top: px;
+    bottom: -60px;
+    right: px;
+    left: -50px;
+    width: 300px;
+    height: auto;
+    opacity: 0.9;
+    z-index: 2;
+    transform: rotate(40deg);
+  
+}
+.monikaCantik2{
+    position: absolute;
+    top: px;
+    bottom: -60px;
+    right: px;
+    left: -105px;
+    width: 300px;
+    height: auto;
+    opacity: 0.9;
+    z-index: 2;
+  
+}
+.monikaCantik3{
+    position: absolute;
+    top: px;
+    bottom: -125px;
+    right: px;
+    left: -40px;
+    width: 300px;
+    height: auto;
+    opacity: 0.9;
+    z-index: 2;
+    transform: rotate(60deg);
+}
 .ornament-bottom {
     position: absolute;
     bottom: -150px;
@@ -179,7 +216,7 @@ input::placeholder {
     pointer-events: none;
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 1024px) {
     .left-section,
     .right-section {

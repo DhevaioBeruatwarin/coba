@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Pembeli;
 use App\Models\Seniman;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
@@ -19,7 +21,7 @@ class AuthController extends Controller
             'role' => 'required|in:seniman,pembeli',
         ]);
 
-        // Simpan data sesuai role
+
         if ($request->role === 'pembeli') {
             Pembeli::create([
                 'nama' => $request->nama,
@@ -39,5 +41,14 @@ class AuthController extends Controller
         }
 
         return redirect('/login')->with('success', 'Registrasi berhasil! Silakan login.');
+    }
+
+
+    //buat login
+
+    function login(Request $request)
+    {
+
+
     }
 }
