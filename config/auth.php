@@ -3,67 +3,57 @@
 return [
 
     'defaults' => [
-        'guard' => 'web', // default: pembeli
-        'passwords' => 'pembelis',
+        'guard' => 'pembeli',
+        'passwords' => 'users',
     ],
 
     'guards' => [
-        // guard untuk pembeli
         'web' => [
             'driver' => 'session',
-            'provider' => 'pembelis',
+            'provider' => 'users',
         ],
 
-        // guard untuk seniman
+        'pembeli' => [
+            'driver' => 'session',
+            'provider' => 'pembeli',
+        ],
+
         'seniman' => [
             'driver' => 'session',
-            'provider' => 'senimans',
+            'provider' => 'seniman',
         ],
 
-        // guard untuk admin
         'admin' => [
             'driver' => 'session',
-            'provider' => 'admins',
+            'provider' => 'admin',
         ],
     ],
 
     'providers' => [
-        // provider pembeli
-        'pembelis' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+
+        'pembeli' => [
             'driver' => 'eloquent',
             'model' => App\Models\Pembeli::class,
         ],
 
-        // provider seniman
-        'senimans' => [
+        'seniman' => [
             'driver' => 'eloquent',
             'model' => App\Models\Seniman::class,
         ],
 
-        // provider admin
-        'admins' => [
+        'admin' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
     ],
 
     'passwords' => [
-        'pembelis' => [
-            'provider' => 'pembelis',
-            'table' => 'password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-
-        'senimans' => [
-            'provider' => 'senimans',
-            'table' => 'password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-
-        'admins' => [
-            'provider' => 'admins',
+        'users' => [
+            'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

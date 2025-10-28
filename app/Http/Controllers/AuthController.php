@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pembeli;
 use App\Models\Seniman;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,7 +47,7 @@ class AuthController extends Controller
 
     //buat login
 
-    function login(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -54,17 +55,49 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $user = auth()->user();
 
-        if (auth()->attempt($credentials)) {
-            if ($user === 'pembeli') {
-                return redirect()->route('/dashboard');
-            } elseif ($user === 'seniman') {
-                return redirect()->route('Seniman/dashboard');
-            } elseif ($user === 'admin') {
-                return redirect()->route('Admin/dashboard');
-            }
+
+        $pembeli = Pembeli::where('email', $credentials['email'])->first();
+        if ($pembeli && Hash::check($credentials['password'], $pembeli->password)) {
+            Auth::guard('pembeli')->login($pembeli);
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
         }
 
+
+        $seniman = Seniman::where('email', $credentials['email'])->first();
+        if ($seniman && Hash::check($credentials['password'], $seniman->password)) {
+            Auth::guard('seniman')->login($seniman);
+            $request->session()->regenerate();
+            return redirect()->intended('/Seniman/dashboard');
+        }
+
+
+        $admin = Admin::where('email', $credentials['email'])->first();
+        if ($admin && Hash::check($credentials['password'], $admin->password)) {
+            Auth::guard('admin')->login($admin);
+            $request->session()->regenerate();
+            return redirect()->intended('/Admin/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->withInput($request->only('email'));
+    }
+
+    public function logout(Request $request)
+    {
+        if (Auth::guard('pembeli')->check()) {
+            Auth::guard('pembeli')->logout();
+        } elseif (Auth::guard('seniman')->check()) {
+            Auth::guard('seniman')->logout();
+        } elseif (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
