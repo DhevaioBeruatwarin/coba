@@ -48,7 +48,23 @@ class AuthController extends Controller
 
     function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
+        $credentials = $request->only('email', 'password');
+        $user = auth()->user();
+
+        if (auth()->attempt($credentials)) {
+            if ($user === 'pembeli') {
+                return redirect()->route('/dashboard');
+            } elseif ($user === 'seniman') {
+                return redirect()->route('Seniman/dashboard');
+            } elseif ($user === 'admin') {
+                return redirect()->route('Admin/dashboard');
+            }
+        }
 
     }
 }
