@@ -10,23 +10,24 @@ class Transaksi extends Model
     use HasFactory;
 
     protected $table = 'transaksi'; // nama tabel di database
+    protected $primaryKey = 'no_transaksi';
+
     protected $fillable = [
-        'pembeli_id',
-        'karya_id',
-        'tanggal_transaksi',
-        'total_harga',
-        'status_pembayaran'
+        'id_pembeli',    // harus sesuai migrasi
+        'kode_seni',     // harus sesuai migrasi
+        'tanggal_jual',
+        'harga'
     ];
 
-    // Relasi ke Pembeli (many-to-one)
+    // Relasi ke Pembeli
     public function pembeli()
     {
-        return $this->belongsTo(Pembeli::class, 'pembeli_id');
+        return $this->belongsTo(Pembeli::class, 'id_pembeli', 'id_pembeli');
     }
 
-    // Relasi ke Karya Seni (many-to-one)
+    // Relasi ke KaryaSeni
     public function karya()
     {
-        return $this->belongsTo(KaryaSeni::class, 'karya_id');
+        return $this->belongsTo(KaryaSeni::class, 'kode_seni', 'kode_seni');
     }
 }
