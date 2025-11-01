@@ -11,7 +11,7 @@
         <div class="logo">JOGJA ARTSPHERE</div>
         <nav class="nav-links">
             <a href="{{ url('/register') }}" class="btn signup-btn">Sign Up</a>
-            <button class="btn login-btn">Login</button>
+
         </nav>
     </header>
     
