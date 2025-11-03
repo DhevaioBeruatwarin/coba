@@ -25,9 +25,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 // ======================================
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// ======================================
+
 // DASHBOARD ROUTES
-// ======================================
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
+
+
 
 // PEMBELI
 Route::prefix('pembeli')
