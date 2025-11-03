@@ -9,19 +9,24 @@ use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-
 class AuthController extends Controller
 {
+    // Form register
+    public function showRegisterForm()
+    {
+        return view('register');
+    }
+
+    // Register user
     public function register(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'email' => 'required|email|unique:pembeli|unique:seniman',
+            'email' => 'required|email|unique:pembeli|unique:seniman|unique:admin',
             'password' => 'required|confirmed|min:6',
             'no_hp' => 'required|numeric|digits_between:10,12',
             'role' => 'required|in:seniman,pembeli',
         ]);
-
 
         if ($request->role === 'pembeli') {
             Pembeli::create([
@@ -41,12 +46,17 @@ class AuthController extends Controller
             ]);
         }
 
-        return redirect('/login')->with('success', 'Registrasi berhasil! Silakan login.');
+        // redirect ke login
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 
+    // Form login
+    public function showLoginForm()
+    {
+        return view('login');
+    }
 
-    //buat login
-
+    // Login user
     public function login(Request $request)
     {
         $request->validate([
@@ -56,28 +66,28 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-
+        // Pembeli
         $pembeli = Pembeli::where('email', $credentials['email'])->first();
         if ($pembeli && Hash::check($credentials['password'], $pembeli->password)) {
             Auth::guard('pembeli')->login($pembeli);
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return redirect()->route('pembeli.dashboard');
         }
 
-
+        // Seniman
         $seniman = Seniman::where('email', $credentials['email'])->first();
         if ($seniman && Hash::check($credentials['password'], $seniman->password)) {
             Auth::guard('seniman')->login($seniman);
             $request->session()->regenerate();
-            return redirect()->intended('/Seniman/dashboard');
+            return redirect()->route('seniman.dashboard');
         }
 
-
+        // Admin
         $admin = Admin::where('email', $credentials['email'])->first();
         if ($admin && Hash::check($credentials['password'], $admin->password)) {
             Auth::guard('admin')->login($admin);
             $request->session()->regenerate();
-            return redirect()->intended('/Admin/dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors([
@@ -85,19 +95,18 @@ class AuthController extends Controller
         ])->withInput($request->only('email'));
     }
 
+    // Logout universal
     public function logout(Request $request)
     {
-        if (Auth::guard('pembeli')->check()) {
-            Auth::guard('pembeli')->logout();
-        } elseif (Auth::guard('seniman')->check()) {
-            Auth::guard('seniman')->logout();
-        } elseif (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
+        foreach (['pembeli', 'seniman', 'admin'] as $guard) {
+            if (Auth::guard($guard)->check()) {
+                Auth::guard($guard)->logout();
+            }
         }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('landing');
     }
 }

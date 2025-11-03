@@ -1,65 +1,72 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// Landing page (bisa diakses semua orang)
+// ======================================
+// LANDING PAGE (bisa diakses siapa saja)
+// ======================================
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
-// Authentication routes (hanya untuk guest/belum login)
-Route::middleware('guest')->group(function () {
-    // Register
-    Route::get('/register', function () {
-        return view('register');
-    })->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+// ======================================
+// AUTH ROUTES (bisa diakses meskipun login)
+// ======================================
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    // Login
-    Route::get('/login', function () {
-        return view('login');
-    })->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-});
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-// Logout (hanya untuk yang sudah login)
+// ======================================
+// LOGOUT (untuk semua role)
+// ======================================
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Dashboard Pembeli (harus login sebagai pembeli)
-Route::middleware(['auth:pembeli'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('pembeli.dashboard');
+// ======================================
+// DASHBOARD ROUTES
+// ======================================
 
-    // Tambahkan route pembeli lainnya di sini
-});
+// PEMBELI
+Route::prefix('pembeli')
+    ->middleware('auth:pembeli')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard'); // langsung views/dashboard.blade.php
+        })->name('pembeli.dashboard');
+    });
 
-// Dashboard Seniman (harus login sebagai seniman)
-Route::middleware(['auth:seniman'])->group(function () {
-    Route::get('/seniman/dashboard', function () {
-        return view('seniman-dashboard'); // Sesuaikan dengan nama view Anda
-    })->name('seniman.dashboard');
+// SENIMAN
+Route::prefix('seniman')
+    ->middleware('auth:seniman')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('Seniman.dashboard');
+        })->name('seniman.dashboard');
+    });
 
-    // Tambahkan route seniman lainnya di sini
-});
+// ADMIN
+Route::prefix('admin')
+    ->middleware('auth:admin')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('Admin.dashboard');
+        })->name('admin.dashboard');
+    });
 
-// Dashboard Admin (harus login sebagai admin)
-Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin-dashboard'); // Sesuaikan dengan nama view Anda
-    })->name('admin.dashboard');
-
-    // Tambahkan route admin lainnya di sini
-});
-
-// Route testing (opsional, bisa dihapus)
-Route::get('/fsfsfsfsf', function () {
-    return view('welcome');
-});
+// ======================================
+// REDIRECT AFTER LOGIN (opsional)
+// ======================================
+Route::get('/redirect-after-login', function () {
+    if (Auth::guard('pembeli')->check()) {
+        return redirect()->route('pembeli.dashboard');
+    } elseif (Auth::guard('seniman')->check()) {
+        return redirect()->route('seniman.dashboard');
+    } elseif (Auth::guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return redirect()->route('landing');
+    }
+})->name('redirect.after.login');

@@ -9,12 +9,12 @@ use App\Http\Controllers\AuthController;
 |--------------------------------------------------------------------------
 */
 
-// Landing page
+// Landing page (bisa diakses siapa saja)
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
-// Authentication routes (guest only)
+// Authentication routes (hanya untuk guest)
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
@@ -23,32 +23,34 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-// Logout route (authenticated only)
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+// Logout (untuk user yang sudah login di salah satu guard)
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('web'); // cukup 'web', karena kita handle logout semua guard di controller
 
-// Pembeli routes
-Route::middleware(['auth:pembeli'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pembeli.dashboard');
-    })->name('pembeli.dashboard');
+// ===================== PEMBELI =====================
+Route::prefix('pembeli')
+    ->middleware('auth:pembeli')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('pembeli.dashboard');
+    });
 
-    // Tambahkan route pembeli lainnya di sini
-});
+// ===================== SENIMAN =====================
+Route::prefix('seniman')
+    ->middleware('auth:seniman')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('Seniman.dashboard');
+        })->name('seniman.dashboard');
+    });
 
-// Seniman routes
-Route::middleware(['auth:seniman'])->group(function () {
-    Route::get('/seniman/dashboard', function () {
-        return view('seniman.dashboard');
-    })->name('seniman.dashboard');
-
-    // Tambahkan route seniman lainnya di sini
-});
-
-// Admin routes
-Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-
-    // Tambahkan route admin lainnya di sini
-});
+// ===================== ADMIN =====================
+Route::prefix('admin')
+    ->middleware('auth:admin')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('Admin.dashboard');
+        })->name('admin.dashboard');
+    });

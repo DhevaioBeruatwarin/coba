@@ -51,5 +51,6 @@ class Seniman extends Authenticatable
     public function karya()
     {
         return $this->hasMany(KaryaSeni::class, 'id_seniman', 'id_seniman');
+
     }
 }
