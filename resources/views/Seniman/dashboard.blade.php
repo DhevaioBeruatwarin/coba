@@ -9,9 +9,10 @@
        <!-- Navbar -->
     <header class="navbar">
         <div class="logo">JOGJA ARTSPHERE</div>
-        <nav class="nav-links">
-            <a href="{{ url('/register') }}" class="btn signup-btn">Sign Up</a>
-
+        <nav class="nav-links" style="display:flex;gap:12px;align-items:center;">
+            @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
+                <a href="{{ route('seniman.profil.edit') }}" title="Profil" style="text-decoration:none;font-size:22px;">👤</a>
+            @endif
         </nav>
     </header>
     

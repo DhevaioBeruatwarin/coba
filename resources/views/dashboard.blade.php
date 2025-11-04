@@ -17,7 +17,9 @@
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
             <button class="icon-btn">🛒</button>
-            <button class="icon-btn">👤</button>
+            @if(\Illuminate\Support\Facades\Auth::guard('pembeli')->check())
+                <a class="icon-btn" href="{{ route('pembeli.profil') }}" title="Profil">👤</a>
+            @endif
         </div>
     </header>
 
