@@ -24,5 +24,7 @@ Route::middleware(['auth:seniman'])->group(function () {
     Route::post('/seniman/upload', [KaryaSeniController::class, 'store'])->name('seniman.store');
     Route::get('/seniman/karya/{id}', [KaryaSeniController::class, 'show'])->name('seniman.show');
     Route::delete('/seniman/karya/{id}', [KaryaSeniController::class, 'destroy'])->name('seniman.destroy');
+
+
 });
 

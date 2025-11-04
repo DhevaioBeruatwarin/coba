@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardPembeliController;
+use App\Http\Controllers\DashboardSenimanController;
 
 // ======================================
 // LANDING PAGE (bisa diakses siapa saja)
@@ -33,13 +35,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::prefix('pembeli')
     ->middleware('auth:pembeli')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard'); // langsung views/dashboard.blade.php
-        })->name('pembeli.dashboard');
-
-        // Profil pembeli
-        Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
+        Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
     });
+
+// Profil pembeli
+Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
+
 
 // SENIMAN
 Route::prefix('seniman')
@@ -48,6 +49,11 @@ Route::prefix('seniman')
         Route::get('/dashboard', function () {
             return view('Seniman.dashboard');
         })->name('seniman.dashboard');
+
+
+
+        Route::get('/profil/edit', [App\Http\Controllers\SenimanController::class, 'edit'])->name('seniman.profil.edit');
+        Route::post('/profil/update', [App\Http\Controllers\SenimanController::class, 'update'])->name('seniman.profil.update');
     });
 
 // ADMIN
@@ -73,3 +79,5 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
+
+
