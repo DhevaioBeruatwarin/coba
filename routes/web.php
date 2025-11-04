@@ -36,6 +36,9 @@ Route::prefix('pembeli')
         Route::get('/dashboard', function () {
             return view('dashboard'); // langsung views/dashboard.blade.php
         })->name('pembeli.dashboard');
+
+        // Profil pembeli
+        Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
     });
 
 // SENIMAN
