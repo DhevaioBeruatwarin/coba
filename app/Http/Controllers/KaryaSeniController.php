@@ -8,24 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class KaryaSeniController extends Controller
 {
-    // Menampilkan daftar karya seni milik seniman yang login
+    // Menampilkan dashboard seniman (daftar karya milik seniman login)
     public function index()
     {
         $seniman = Auth::guard('seniman')->user();
 
-        // Ambil semua karya milik seniman ini
         $karya = KaryaSeni::where('seniman_id', $seniman->id)->get();
 
         return view('Seniman.dashboard', compact('karya', 'seniman'));
     }
 
-    // Menampilkan form upload karya baru
     public function create()
     {
         return view('Seniman.upload_karya');
     }
 
-    // Menyimpan karya seni baru
     public function store(Request $request)
     {
         $request->validate([
@@ -36,7 +33,6 @@ class KaryaSeniController extends Controller
         ]);
 
         $seniman = Auth::guard('seniman')->user();
-
         $path = $request->file('gambar')->store('karya_seni', 'public');
 
         KaryaSeni::create([
@@ -48,21 +44,5 @@ class KaryaSeniController extends Controller
         ]);
 
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil diupload!');
-    }
-
-    // Menampilkan detail karya seni
-    public function show($id)
-    {
-        $karya = KaryaSeni::findOrFail($id);
-        return view('Seniman.detail_karya', compact('karya'));
-    }
-
-    // Menghapus karya seni
-    public function destroy($id)
-    {
-        $karya = KaryaSeni::findOrFail($id);
-        $karya->delete();
-
-        return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil dihapus!');
     }
 }

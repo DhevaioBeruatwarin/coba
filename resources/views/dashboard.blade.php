@@ -17,7 +17,7 @@
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
             <button class="icon-btn">🛒</button>
-            <button class="icon-btn">👤</button>
+          <a href="{{ url('/profile') }}" class="icon-btn">👤</a>
         </div>
     </header>
 
