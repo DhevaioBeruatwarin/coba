@@ -5,33 +5,28 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardPembeliController;
 use App\Http\Controllers\DashboardSenimanController;
+use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\SenimanController;
 
 // ======================================
-// LANDING PAGE (bisa diakses siapa saja)
+// LANDING PAGE
 // ======================================
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
 // ======================================
-// AUTH ROUTES (bisa diakses meskipun login)
+// AUTH ROUTES
 // ======================================
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-
-// ======================================
-// LOGOUT (untuk semua role)
-// ======================================
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ======================================
-// DASHBOARD ROUTES
+// DASHBOARD PEMBELI
 // ======================================
-
-// PEMBELI
 Route::prefix('pembeli')
     ->middleware('auth:pembeli')
     ->group(function () {
@@ -42,7 +37,9 @@ Route::prefix('pembeli')
 Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
 
 
-// SENIMAN
+// ======================================
+// DASHBOARD SENIMAN
+// ======================================
 Route::prefix('seniman')
     ->middleware('auth:seniman')
     ->group(function () {
@@ -50,13 +47,14 @@ Route::prefix('seniman')
             return view('Seniman.dashboard');
         })->name('seniman.dashboard');
 
-
-
         Route::get('/profil/edit', [App\Http\Controllers\SenimanController::class, 'edit'])->name('seniman.profil.edit');
         Route::post('/profil/update', [App\Http\Controllers\SenimanController::class, 'update'])->name('seniman.profil.update');
     });
 
-// ADMIN
+
+// ======================================
+// DASHBOARD ADMIN
+// ======================================
 Route::prefix('admin')
     ->middleware('auth:admin')
     ->group(function () {
@@ -66,7 +64,7 @@ Route::prefix('admin')
     });
 
 // ======================================
-// REDIRECT AFTER LOGIN (opsional)
+// REDIRECT AFTER LOGIN
 // ======================================
 Route::get('/redirect-after-login', function () {
     if (Auth::guard('pembeli')->check()) {
@@ -79,5 +77,3 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
-
-
