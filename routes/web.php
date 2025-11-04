@@ -3,9 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardPembeliController;
-use App\Http\Controllers\KaryaSeniController;
+use App\Http\Controllers\DashboardSenimanController;
+use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\SenimanController;
 
 // ======================================
 // LANDING PAGE
@@ -32,18 +33,24 @@ Route::prefix('pembeli')
         Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
     });
 
+// Profil pembeli
+Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
+
+
 // ======================================
 // DASHBOARD SENIMAN
 // ======================================
 Route::prefix('seniman')
     ->middleware('auth:seniman')
     ->group(function () {
-        Route::get('/dashboard', [KaryaSeniController::class, 'index'])->name('seniman.dashboard');
-        Route::get('/upload', [KaryaSeniController::class, 'create'])->name('seniman.upload');
-        Route::post('/upload', [KaryaSeniController::class, 'store'])->name('seniman.store');
-        Route::get('/karya/{id}', [KaryaSeniController::class, 'show'])->name('seniman.karya.detail');
-        Route::delete('/karya/{id}', [KaryaSeniController::class, 'destroy'])->name('seniman.karya.delete');
+        Route::get('/dashboard', function () {
+            return view('Seniman.dashboard');
+        })->name('seniman.dashboard');
+
+        Route::get('/profil/edit', [App\Http\Controllers\SenimanController::class, 'edit'])->name('seniman.profil.edit');
+        Route::post('/profil/update', [App\Http\Controllers\SenimanController::class, 'update'])->name('seniman.profil.update');
     });
+
 
 // ======================================
 // DASHBOARD ADMIN
@@ -70,12 +77,3 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
-
-
-// ======================================
-// akses ke profile pembeli
-// ======================================
-Route::get('/profile', function () {
-    return view('profile');
-});
-

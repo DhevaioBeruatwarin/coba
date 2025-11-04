@@ -10,7 +10,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::guard('pembeli')->user(); // ambil data pembeli yang sedang login
-        return view('profile', compact('user'));
+        return view('pembeli.profile', compact('user'));
     }
 }
 

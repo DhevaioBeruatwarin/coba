@@ -45,4 +45,22 @@ class KaryaSeniController extends Controller
 
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil diupload!');
     }
+<<<<<<< HEAD
+
+    public function show($id)
+    {
+        $karya = KaryaSeni::findOrFail($id);
+        return view('Seniman.detail_karya', compact('karya'));
+    }
+
+    public function destroy($id)
+    {
+        $karya = KaryaSeni::findOrFail($id);
+        $karya->delete();
+
+        return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil dihapus!');
+    }
 }
+=======
+}
+>>>>>>> 84450383e61225d70d6b7b84f64a9e0b035a6274
