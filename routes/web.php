@@ -27,6 +27,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ======================================
 // DASHBOARD ROUTES
+Route::get('/profile', [ProfileController::class, 'index'])
+    ->middleware('auth:pembeli')
+    ->name('profile');
 // ======================================
 
 // PEMBELI
