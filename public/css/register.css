@@ -179,6 +179,22 @@ input::placeholder {
     pointer-events: none;
 }
 
+   .error-label {
+  color: #ffffff;
+}
+
+.error-input {
+  border: 1px solid #e74c3c;
+  background-color: #ffeaea;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 0.9em;
+  margin-top: 4px;
+  display: block;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .left-section,
@@ -238,4 +254,5 @@ input::placeholder {
     .ornament-bottom {
         display: none;
     }
+
 }

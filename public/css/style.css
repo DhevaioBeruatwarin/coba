@@ -1,4 +1,4 @@
-/* RESET & BASE STYLE */
+
 * {
     margin: 0;
     padding: 0;
@@ -196,4 +196,5 @@ body {
         left: -100px;
         bottom: -40px;
     }
+    
 }
