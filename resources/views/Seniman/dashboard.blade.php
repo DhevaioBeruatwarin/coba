@@ -11,7 +11,7 @@
         <div class="logo">JOGJA ARTSPHERE</div>
         <nav class="nav-links" style="display:flex;gap:12px;align-items:center;">
             @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
-                <a href="{{ route('seniman.profil.edit') }}" title="Profil" style="text-decoration:none;font-size:22px;">👤</a>
+                <a href="{{ route('seniman.edit.profil') }}" title="Profil" style="text-decoration:none;font-size:22px;">👤</a>
             @endif
         </nav>
     </header>

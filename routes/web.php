@@ -3,64 +3,93 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardPembeliController;
+use App\Http\Controllers\DashboardSenimanController;
+use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\SenimanController;
 
 // ======================================
-// LANDING PAGE (bisa diakses siapa saja)
+// LANDING PAGE
 // ======================================
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
+
 // ======================================
-// AUTH ROUTES (bisa diakses meskipun login)
+// AUTH ROUTES (LOGIN, REGISTER, LOGOUT)
 // ======================================
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-
-// ======================================
-// LOGOUT (untuk semua role)
-// ======================================
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// ======================================
-// DASHBOARD ROUTES
-// ======================================
 
-// PEMBELI
+// ======================================
+// DASHBOARD PEMBELI
+// ======================================
 Route::prefix('pembeli')
     ->middleware('auth:pembeli')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard'); // langsung views/dashboard.blade.php
-        })->name('pembeli.dashboard');
 
-        // Profil pembeli
-        Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
+        // Dashboard Pembeli
+        Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
+
+        // Profil Pembeli
+        Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
+        Route::get('/profil/edit', [PembeliController::class, 'edit'])->name('pembeli.profil.edit');
+        Route::put('/profil/update', [PembeliController::class, 'update'])->name('pembeli.profil.update');
+        Route::put('/profil/update-foto/{id}', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
     });
 
-// SENIMAN
+
+// ======================================
+// DASHBOARD SENIMAN
+// ======================================
 Route::prefix('seniman')
     ->middleware('auth:seniman')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('Seniman.dashboard');
-        })->name('seniman.dashboard');
+
+        // Dashboard Seniman
+        Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
+
+        // Profil Seniman
+        Route::get('/profil', [SenimanController::class, 'profil'])->name('seniman.profil');
+        Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
+        Route::put('/profil/update', [SenimanController::class, 'update'])->name('seniman.profil.update');
+        Route::put('/profil/update-foto/{id}', [SenimanController::class, 'updateFoto'])->name('seniman.profil.update_foto');
+
+        // CRUD Karya Seniman
+        Route::get('/karya/upload', [DashboardSenimanController::class, 'createKarya'])->name('seniman.karya.upload');
+        Route::post('/karya/store', [DashboardSenimanController::class, 'storeKarya'])->name('seniman.karya.store');
+        Route::get('/karya/edit/{kode_seni}', [DashboardSenimanController::class, 'editKarya'])->name('seniman.karya.edit');
+        Route::put('/karya/update/{kode_seni}', [DashboardSenimanController::class, 'updateKarya'])->name('seniman.karya.update');
+        Route::delete('/karya/delete/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
+
+        // Detail Karya
+        Route::get('/karya/{id}', function ($id) {
+            return view('Seniman.detail_karya', ['id' => $id]);
+        })->name('seniman.karya.detail');
     });
 
-// ADMIN
+
+// ======================================
+// DASHBOARD ADMIN
+// ======================================
 Route::prefix('admin')
     ->middleware('auth:admin')
     ->group(function () {
+
+        // Dashboard Admin
         Route::get('/dashboard', function () {
             return view('Admin.dashboard');
         })->name('admin.dashboard');
     });
 
+
 // ======================================
-// REDIRECT AFTER LOGIN (opsional)
+// REDIRECT AFTER LOGIN
 // ======================================
 Route::get('/redirect-after-login', function () {
     if (Auth::guard('pembeli')->check()) {

@@ -12,14 +12,14 @@ class DashboardSenimanController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:seniman'); // pastikan guard seniman
+        $this->middleware('auth:seniman');
     }
 
     // Dashboard utama
     public function index()
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('seniman_id', $seniman->id)->latest()->get();
+        $karya = KaryaSeni::where('id_seniman', $seniman->id_seniman)->latest()->get();
 
         return view('Seniman.dashboard', compact('seniman', 'karya'));
     }
@@ -79,8 +79,8 @@ class DashboardSenimanController extends Controller
         $request->gambar->storeAs('public/karya_seni', $gambarName);
 
         KaryaSeni::create([
-            'seniman_id' => $seniman->id,
-            'judul' => $request->judul,
+            'id_seniman' => $seniman->id_seniman,
+            'nama_karya' => $request->judul,
             'deskripsi' => $request->deskripsi,
             'harga' => $request->harga,
             'gambar' => $gambarName,
@@ -89,18 +89,18 @@ class DashboardSenimanController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya seni berhasil ditambahkan!');
     }
 
-    public function editKarya($id)
+    public function editKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('id', $id)->where('seniman_id', $seniman->id)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
 
         return view('Seniman.karya.edit', compact('karya'));
     }
 
-    public function updateKarya(Request $request, $id)
+    public function updateKarya(Request $request, $kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('id', $id)->where('seniman_id', $seniman->id)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -109,7 +109,7 @@ class DashboardSenimanController extends Controller
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $karya->judul = $request->judul;
+        $karya->nama_karya = $request->judul;
         $karya->deskripsi = $request->deskripsi;
         $karya->harga = $request->harga;
 
@@ -127,10 +127,10 @@ class DashboardSenimanController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya seni berhasil diperbarui!');
     }
 
-    public function destroyKarya($id)
+    public function destroyKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('id', $id)->where('seniman_id', $seniman->id)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
 
         if ($karya->gambar) {
             Storage::delete('public/karya_seni/' . $karya->gambar);
