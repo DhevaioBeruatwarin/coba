@@ -45,7 +45,6 @@ class KaryaSeniController extends Controller
 
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil diupload!');
     }
-<<<<<<< HEAD
 
     public function show($id)
     {
@@ -61,6 +60,3 @@ class KaryaSeniController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil dihapus!');
     }
 }
-=======
-}
->>>>>>> 84450383e61225d70d6b7b84f64a9e0b035a6274
