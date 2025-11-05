@@ -40,5 +40,7 @@
 <div class="bunga">
         <img src="{{ asset('assets/adajpg-removebg-preview.png') }}"  alt="bunga">
     </div>
+
+
 </body>
 </html>
