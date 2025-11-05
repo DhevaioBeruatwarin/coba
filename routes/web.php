@@ -15,8 +15,9 @@ Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
+
 // ======================================
-// AUTH ROUTES
+// AUTH ROUTES (LOGIN, REGISTER, LOGOUT)
 // ======================================
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -24,31 +25,45 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 // ======================================
 // DASHBOARD PEMBELI
 // ======================================
 Route::prefix('pembeli')
     ->middleware('auth:pembeli')
     ->group(function () {
-        Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
-    });
 
-// Profil pembeli
-Route::get('/profil', [\App\Http\Controllers\PembeliController::class, 'profil'])->name('pembeli.profil');
+        // Dashboard Pembeli
+        Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
+
+        // Profil Pembeli
+        Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
+    });
 
 
 // ======================================
 // DASHBOARD SENIMAN
 // ======================================
-Route::prefix('seniman')
-    ->middleware('auth:seniman')
+Route::prefix('seniman') // ✅ huruf kecil semua
+    ->middleware('auth:seniman') // ✅ huruf kecil semua
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('Seniman.dashboard');
-        })->name('seniman.dashboard');
 
-        Route::get('/profil/edit', [App\Http\Controllers\SenimanController::class, 'edit'])->name('seniman.profil.edit');
-        Route::post('/profil/update', [App\Http\Controllers\SenimanController::class, 'update'])->name('seniman.profil.update');
+        // Dashboard Seniman
+        Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
+
+        // Profil Seniman
+        Route::get('/profile', [SenimanController::class, 'profile'])->name('seniman.profile');
+
+        // Edit Profil Seniman
+        Route::get('/profile/edit', [SenimanController::class, 'edit'])->name('seniman.profile.edit');
+
+        // Update Profil Seniman
+        Route::post('/profile/update', [SenimanController::class, 'update'])->name('seniman.profile.update');
+
+        // Detail Karya
+        Route::get('/karya/{id}', function ($id) {
+            return view('Seniman.detail_karya', ['id' => $id]);
+        })->name('seniman.karya.detail');
     });
 
 
@@ -58,10 +73,13 @@ Route::prefix('seniman')
 Route::prefix('admin')
     ->middleware('auth:admin')
     ->group(function () {
+
+        // Dashboard Admin
         Route::get('/dashboard', function () {
             return view('Admin.dashboard');
         })->name('admin.dashboard');
     });
+
 
 // ======================================
 // REDIRECT AFTER LOGIN
@@ -69,8 +87,8 @@ Route::prefix('admin')
 Route::get('/redirect-after-login', function () {
     if (Auth::guard('pembeli')->check()) {
         return redirect()->route('pembeli.dashboard');
-    } elseif (Auth::guard('seniman')->check()) {
-        return redirect()->route('seniman.dashboard');
+    } elseif (Auth::guard('seniman')->check()) { // ✅ lowercase
+        return redirect()->route('seniman.dashboard'); // ✅ lowercase
     } elseif (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
     } else {
