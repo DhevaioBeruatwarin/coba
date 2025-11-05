@@ -4,69 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profil Seniman</title>
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <style>
-        .container { max-width: 800px; margin: 40px auto; padding: 24px; background:#fff; border-radius:12px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
-        .field { margin-bottom: 16px; }
-        label { display:block; font-size:14px; color:#666; margin-bottom:6px; }
-        input[type="text"], textarea { width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; }
-        textarea { min-height: 120px; resize: vertical; }
-        .actions { display:flex; gap:12px; margin-top: 16px; }
-        .btn { padding:10px 16px; border-radius:8px; text-decoration:none; display:inline-block; }
-        .btn-primary { background:#111; color:#fff; }
-        .btn-secondary { background:#f1f1f1; color:#111; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/Seniman/profile.css') }}">
 </head>
 <body>
-    <header>
+    <header class="seniman-header">
         <div class="header-left">
-            <div class="logo">#</div>
+            <div class="logo">🎨</div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <div class="header-right">
-            <a class="btn btn-secondary" href="{{ route('seniman.dashboard') }}">Kembali</a>
+            <a href="{{ route('seniman.profil') }}" class="back-link">Kembali ke Profil</a>
         </div>
     </header>
 
-    <div class="container">
-        <h2>Edit Profil Seniman</h2>
+    <main class="profile-page">
+        <section class="profile-card" style="margin: 0 auto; max-width: 700px;">
+            <h2 class="profile-title">Edit Profil Seniman</h2>
 
-        @if ($errors->any())
-            <div style="background:#ffecec;color:#b10000;padding:10px 12px;border-radius:8px;margin:10px 0;">
-                <ul style="margin:0;padding-left:18px;">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            <form action="{{ route('seniman.profil.update') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
-        <form action="{{ route('seniman.profil.update') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+                <div class="field-row">
+                    <label class="field-label">Nama Lengkap</label>
+                    <input type="text" name="nama" class="input-field" value="{{ $seniman->nama }}" required>
+                </div>
 
-            <div class="field">
-                <label for="nama">Nama</label>
-                <input type="text" id="nama" name="nama" value="{{ old('nama', $seniman->nama) }}" required>
-            </div>
+                <div class="field-row">
+                    <label class="field-label">Email</label>
+                    <input type="email" name="email" class="input-field" value="{{ $seniman->email }}" required>
+                </div>
 
-            <div class="field">
-                <label for="bio">Bio</label>
-                <textarea id="bio" name="bio">{{ old('bio', $seniman->bio) }}</textarea>
-            </div>
+                <div class="field-row">
+                    <label class="field-label">No. Telepon</label>
+                    <input type="text" name="telepon" class="input-field" value="{{ $seniman->telepon }}">
+                </div>
 
-            <div class="field">
-                <label for="foto">Foto (jpeg/png/jpg, maks 2MB)</label>
-                <input type="file" id="foto" name="foto" accept="image/*">
-            </div>
+                <div class="field-row">
+                    <label class="field-label">Bidang Seni</label>
+                    <input type="text" name="bidang" class="input-field" value="{{ $seniman->bidang }}">
+                </div>
 
-            <div class="actions">
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('seniman.dashboard') }}" class="btn btn-secondary">Batal</a>
-            </div>
-        </form>
-    </div>
+                <div class="field-row">
+                    <label class="field-label">Bio Singkat</label>
+                    <textarea name="bio" class="input-field" rows="3">{{ $seniman->bio }}</textarea>
+                </div>
+
+                <div class="field-row">
+                    <label class="field-label">Alamat</label>
+                    <textarea name="alamat" class="input-field" rows="2">{{ $seniman->alamat }}</textarea>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="btn-upload">Simpan Perubahan</button>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
-
-
+    
