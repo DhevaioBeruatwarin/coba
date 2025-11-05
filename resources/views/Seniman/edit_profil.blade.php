@@ -13,7 +13,7 @@
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <div class="header-right">
-            <a href="{{ route('seniman.profile') }}" class="back-link">Kembali ke Profil</a>
+            <a href="{{ route('seniman.profil') }}" class="back-link">Kembali ke Profil</a>
         </div>
     </header>
 
@@ -21,7 +21,7 @@
         <section class="profile-card" style="margin: 0 auto; max-width: 700px;">
             <h2 class="profile-title">Edit Profil Seniman</h2>
 
-            <form action="{{ route('seniman.update_profil', $seniman->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('seniman.profil.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -63,3 +63,4 @@
     </main>
 </body>
 </html>
+    

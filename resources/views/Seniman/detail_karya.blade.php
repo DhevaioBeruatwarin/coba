@@ -33,8 +33,8 @@
                     <p><strong>Tanggal Upload:</strong> {{ $karya->created_at->format('d M Y') }}</p>
 
                     <div style="margin-top: 20px;">
-                        <a href="{{ route('seniman.edit_karya', $karya->id) }}" class="btn-upload">Edit Karya</a>
-                        <form action="{{ route('seniman.delete_karya', $karya->id) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('seniman.karya.edit', $karya->id) }}" class="btn-upload">Edit Karya</a>
+                        <form action="{{ route('seniman.karya.delete', $karya->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-upload" style="background:#c0392b;color:white;">Hapus</button>

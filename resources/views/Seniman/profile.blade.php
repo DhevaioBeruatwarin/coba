@@ -22,9 +22,9 @@
             <div class="profile-menu-title">Menu Seniman</div>
             <ul class="profile-menu">
                 <li><a href="{{ route('seniman.profile') }}" class="active">Profil</a></li>
-                <li><a href="{{ route('seniman.detail_karya') }}">Karya Saya</a></li>
+                <li><a href="{{ route('seniman.karya.detail') }}">Karya Saya</a></li>
                 <li><a href="{{ route('seniman.upload_karya') }}">Upload Karya</a></li>
-                <li><a href="{{ route('seniman.edit_profil') }}">Edit Profil</a></li>
+                <li><a href="{{ route('seniman.edit.profil') }}">Edit Profil</a></li>
                 <li><a href="{{ route('logout') }}">Keluar</a></li>
             </ul>
         </aside>

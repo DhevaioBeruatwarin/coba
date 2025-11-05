@@ -38,27 +38,34 @@ Route::prefix('pembeli')
 
         // Profil Pembeli
         Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
+        Route::get('/profil/edit', [PembeliController::class, 'edit'])->name('pembeli.profil.edit');
+        Route::put('/profil/update', [PembeliController::class, 'update'])->name('pembeli.profil.update');
+        Route::put('/profil/update-foto/{id}', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
     });
 
 
 // ======================================
 // DASHBOARD SENIMAN
 // ======================================
-Route::prefix('seniman') // ✅ huruf kecil semua
-    ->middleware('auth:seniman') // ✅ huruf kecil semua
+Route::prefix('seniman')
+    ->middleware('auth:seniman')
     ->group(function () {
 
         // Dashboard Seniman
         Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
 
         // Profil Seniman
-        Route::get('/profile', [SenimanController::class, 'profile'])->name('seniman.profile');
+        Route::get('/profil', [SenimanController::class, 'profil'])->name('seniman.profil');
+        Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
+        Route::put('/profil/update', [SenimanController::class, 'update'])->name('seniman.profil.update');
+        Route::put('/profil/update-foto/{id}', [SenimanController::class, 'updateFoto'])->name('seniman.profil.update_foto');
 
-        // Edit Profil Seniman
-        Route::get('/profile/edit', [SenimanController::class, 'edit'])->name('seniman.profile.edit');
-
-        // Update Profil Seniman
-        Route::post('/profile/update', [SenimanController::class, 'update'])->name('seniman.profile.update');
+        // CRUD Karya Seniman
+        Route::get('/karya/upload', [DashboardSenimanController::class, 'createKarya'])->name('seniman.karya.upload');
+        Route::post('/karya/store', [DashboardSenimanController::class, 'storeKarya'])->name('seniman.karya.store');
+        Route::get('/karya/edit/{kode_seni}', [DashboardSenimanController::class, 'editKarya'])->name('seniman.karya.edit');
+        Route::put('/karya/update/{kode_seni}', [DashboardSenimanController::class, 'updateKarya'])->name('seniman.karya.update');
+        Route::delete('/karya/delete/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
 
         // Detail Karya
         Route::get('/karya/{id}', function ($id) {
@@ -87,8 +94,8 @@ Route::prefix('admin')
 Route::get('/redirect-after-login', function () {
     if (Auth::guard('pembeli')->check()) {
         return redirect()->route('pembeli.dashboard');
-    } elseif (Auth::guard('seniman')->check()) { // ✅ lowercase
-        return redirect()->route('seniman.dashboard'); // ✅ lowercase
+    } elseif (Auth::guard('seniman')->check()) {
+        return redirect()->route('seniman.dashboard');
     } elseif (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
     } else {
