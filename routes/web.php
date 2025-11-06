@@ -40,7 +40,9 @@ Route::prefix('pembeli')
         Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
         Route::get('/profil/edit', [PembeliController::class, 'edit'])->name('pembeli.profil.edit');
         Route::put('/profil/update', [PembeliController::class, 'update'])->name('pembeli.profil.update');
-        Route::put('/profil/update-foto/{id}', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
+
+        // Upload foto - GANTI JADI POST
+        Route::post('/profil/foto', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
     });
 
 
@@ -55,10 +57,12 @@ Route::prefix('seniman')
         Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
 
         // Profil Seniman
-        Route::get('/profil', [SenimanController::class, 'profil'])->name('seniman.profil');
+        Route::get('/profil', [SenimanController::class, 'profile'])->name('seniman.profil');
         Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
         Route::put('/profil/update', [SenimanController::class, 'update'])->name('seniman.profil.update');
-        Route::put('/profil/update-foto/{id}', [SenimanController::class, 'updateFoto'])->name('seniman.profil.update_foto');
+
+        // Upload foto - GANTI JADI POST
+        Route::post('/profil/foto', [SenimanController::class, 'updateFoto'])->name('seniman.profil.foto.update');
 
         // CRUD Karya Seniman
         Route::get('/karya/upload', [DashboardSenimanController::class, 'createKarya'])->name('seniman.karya.upload');
@@ -72,6 +76,13 @@ Route::prefix('seniman')
             return view('Seniman.detail_karya', ['id' => $id]);
         })->name('seniman.karya.detail');
     });
+
+//logout
+
+Route::get('/seniman/logout', function () {
+    Auth::guard('seniman')->logout();
+    return redirect()->route('login')->with('success', 'Berhasil logout!');
+})->name('seniman.logout');
 
 
 // ======================================
@@ -102,3 +113,4 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
+

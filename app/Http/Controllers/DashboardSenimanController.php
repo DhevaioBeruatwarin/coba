@@ -15,13 +15,15 @@ class DashboardSenimanController extends Controller
         $this->middleware('auth:seniman');
     }
 
-    // Dashboard utama
+    // Dashboard utama (tampilkan karya seniman yang login)
     public function index()
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('id_seniman', $seniman->id_seniman)->latest()->get();
+        $karyaSeni = KaryaSeni::where('id_seniman', $seniman->id_seniman)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('Seniman.dashboard', compact('seniman', 'karya'));
+        return view('Seniman.dashboard', compact('seniman', 'karyaSeni'));
     }
 
     // Edit profil seniman
@@ -58,7 +60,7 @@ class DashboardSenimanController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Profil berhasil diperbarui!');
     }
 
-    // CRUD karya seni
+    // Tambah karya
     public function createKarya()
     {
         return view('Seniman.karya.create');
@@ -89,10 +91,13 @@ class DashboardSenimanController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya seni berhasil ditambahkan!');
     }
 
+    // Update karya
     public function editKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
         return view('Seniman.karya.edit', compact('karya'));
     }
@@ -100,7 +105,9 @@ class DashboardSenimanController extends Controller
     public function updateKarya(Request $request, $kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -127,10 +134,13 @@ class DashboardSenimanController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya seni berhasil diperbarui!');
     }
 
+    // Hapus karya
     public function destroyKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
         if ($karya->gambar) {
             Storage::delete('public/karya_seni/' . $karya->gambar);
