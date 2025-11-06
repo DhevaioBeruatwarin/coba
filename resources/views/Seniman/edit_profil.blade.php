@@ -21,38 +21,52 @@
         <section class="profile-card" style="margin: 0 auto; max-width: 700px;">
             <h2 class="profile-title">Edit Profil Seniman</h2>
 
+            @if(session('success'))
+                <p style="color: green; text-align: center;">{{ session('success') }}</p>
+            @endif
+
+            @if ($errors->any())
+                <div style="color: red; margin-bottom: 15px;">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('seniman.profil.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <div class="field-row">
                     <label class="field-label">Nama Lengkap</label>
-                    <input type="text" name="nama" class="input-field" value="{{ $seniman->nama }}" required>
+                    <input type="text" name="nama" class="input-field" value="{{ $seniman->nama }}" readonly>
                 </div>
 
                 <div class="field-row">
                     <label class="field-label">Email</label>
-                    <input type="email" name="email" class="input-field" value="{{ $seniman->email }}" required>
+                    <input type="email" name="email" class="input-field" value="{{ $seniman->email }}" readonly>
                 </div>
 
                 <div class="field-row">
                     <label class="field-label">No. Telepon</label>
-                    <input type="text" name="telepon" class="input-field" value="{{ $seniman->telepon }}">
+                    <input type="text" name="no_hp" class="input-field" value="{{ $seniman->no_hp }}">
                 </div>
 
                 <div class="field-row">
                     <label class="field-label">Bidang Seni</label>
-                    <input type="text" name="bidang" class="input-field" value="{{ $seniman->bidang }}">
+                    <input type="text" name="bidang" class="input-field" value="{{ $seniman->bidang ?? '' }}">
                 </div>
 
                 <div class="field-row">
                     <label class="field-label">Bio Singkat</label>
-                    <textarea name="bio" class="input-field" rows="3">{{ $seniman->bio }}</textarea>
+                    <textarea name="bio" class="input-field" rows="3">{{ $seniman->bio ?? '' }}</textarea>
                 </div>
 
                 <div class="field-row">
                     <label class="field-label">Alamat</label>
-                    <textarea name="alamat" class="input-field" rows="2">{{ $seniman->alamat }}</textarea>
+                    <textarea name="alamat" class="input-field" rows="2">{{ $seniman->alamat ?? '' }}</textarea>
                 </div>
 
                 <div style="text-align: center; margin-top: 25px;">
@@ -63,4 +77,3 @@
     </main>
 </body>
 </html>
-    

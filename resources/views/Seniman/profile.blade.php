@@ -3,86 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Profil Seniman</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/Seniman/profile.css') }}">
     <style>
-        body {
-            background-color: #fafafa;
-            font-family: 'Segoe UI', sans-serif;
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
-        .sidebar {
-            background-color: #fff;
-            height: 100vh;
-            border-right: 1px solid #ddd;
-            padding: 30px 20px;
+        .loading-overlay.show {
+            display: flex;
         }
-        .sidebar h5 {
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            margin: 15px 0;
-        }
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-        }
-        .sidebar ul li a.active {
-            color: #7a5af5;
-        }
-        .main-content {
-            padding: 40px 50px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-            margin: 40px;
-        }
-        .profile-photo {
-            text-align: center;
-            margin-left: auto;
-        }
-        .profile-photo img {
-            width: 150px;
-            height: 150px;
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
-            object-fit: cover;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
         }
-        .btn-upload {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 15px;
-            background-color: #7a5af5;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-upload:hover {
-            background-color: #6848e6;
-        }
-        .footer {
-            background-color: #2c1e15;
-            color: white;
-            padding: 40px 0;
-            margin-top: 60px;
-        }
-        .footer h5 {
-            color: #fff;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        .footer p {
-            font-size: 14px;
-            color: #ccc;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
+<body> 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center text-white">
+            <div class="spinner mx-auto mb-3"></div>
+            <p>Mengupload foto...</p>
+        </div>
+    </div>
+
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar col-md-3">
@@ -90,7 +55,6 @@
             <ul>
                 <li><a href="{{ route('seniman.profil') }}" class="active">Profil</a></li>
                 <li><a href="#">Karya Saya</a></li>
-
                 <li><a href="{{ route('seniman.karya.upload') }}">Upload Karya</a></li>
                 <li><a href="{{ route('seniman.edit.profil') }}">Edit Profil</a></li>
                 <li><a href="{{ route('logout') }}">Keluar</a></li>
@@ -99,6 +63,31 @@
 
         <!-- Main content -->
         <div class="main-content flex-fill">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
             <div class="d-flex justify-content-between align-items-start">
                 <div class="col-md-8">
                     <h3 class="mb-4">Profil Saya</h3>
@@ -112,15 +101,27 @@
 
                 <div class="profile-photo col-md-4">
                     @if($seniman->foto)
-                        <img src="{{ asset('storage/foto_seniman/' . $seniman->foto) }}" alt="Foto Seniman">
+                        <img src="{{ asset('storage/foto_seniman/' . $seniman->foto) }}?v={{ time() }}" 
+                             alt="Foto Seniman" 
+                             id="profileImage"
+                             style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
                     @else
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar Default">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                             alt="Avatar Default" 
+                             id="profileImage"
+                             style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
                     @endif
-                    <form action="# }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('seniman.profil.foto.update') }}" 
+                          method="POST" 
+                          enctype="multipart/form-data" 
+                          id="fotoForm">
                         @csrf
-                        @method('PUT')
-                        <input type="file" name="foto" id="foto" hidden onchange="this.form.submit()">
-                        <label for="foto" class="btn-upload">Pilih Gambar</label>
+                        <input type="file" 
+                               name="foto" 
+                               id="foto" 
+                               accept="image/jpeg,image/png,image/jpg,image/gif" 
+                               hidden>
+                        <label for="foto" class="btn-upload" style="cursor: pointer;">Pilih Gambar</label>
                     </form>
                 </div>
             </div>
@@ -155,5 +156,51 @@
             <p class="mt-3">© 2025 Jogja Artsphere — Dukung Karya Lokal</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                // Validasi ukuran file (max 2MB)
+                if (file.size > 2048000) {
+                    alert('Ukuran foto maksimal 2MB');
+                    e.target.value = '';
+                    return;
+                }
+                
+                // Validasi tipe file
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Format foto harus JPEG, PNG, JPG, atau GIF');
+                    e.target.value = '';
+                    return;
+                }
+                
+                // Tampilkan loading
+                document.getElementById('loadingOverlay').classList.add('show');
+                
+                // Submit form
+                document.getElementById('fotoForm').submit();
+            }
+        });
+
+        // Auto dismiss alerts setelah 5 detik
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        // Prevent back button cache
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 </html>
