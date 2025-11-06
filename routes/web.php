@@ -55,7 +55,7 @@ Route::prefix('seniman')
         Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
 
         // Profil Seniman
-        Route::get('/profil', [SenimanController::class, 'profil'])->name('seniman.profil');
+        Route::get('/profil', [SenimanController::class, 'profile'])->name('seniman.profil');
         Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
         Route::put('/profil/update', [SenimanController::class, 'update'])->name('seniman.profil.update');
         Route::put('/profil/update-foto/{id}', [SenimanController::class, 'updateFoto'])->name('seniman.profil.update_foto');
