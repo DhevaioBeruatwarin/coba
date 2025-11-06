@@ -19,7 +19,8 @@ class Seniman extends Authenticatable
         'email',
         'password',
         'alamat',
-        'no_hp'
+        'no_hp',
+        'foto'
     ];
 
     protected $hidden = [

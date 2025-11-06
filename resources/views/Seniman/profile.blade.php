@@ -57,7 +57,7 @@
                 <li><a href="#">Karya Saya</a></li>
                 <li><a href="{{ route('seniman.karya.upload') }}">Upload Karya</a></li>
                 <li><a href="{{ route('seniman.edit.profil') }}">Edit Profil</a></li>
-                <li><a href="{{ route('logout') }}">Keluar</a></li>
+                <li><a href="{{ route('seniman.logout') }}">Keluar</a></li>
             </ul>
         </div>
 

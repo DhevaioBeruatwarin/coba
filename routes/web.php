@@ -77,6 +77,13 @@ Route::prefix('seniman')
         })->name('seniman.karya.detail');
     });
 
+//logout
+
+Route::get('/seniman/logout', function () {
+    Auth::guard('seniman')->logout();
+    return redirect()->route('login')->with('success', 'Berhasil logout!');
+})->name('seniman.logout');
+
 
 // ======================================
 // DASHBOARD ADMIN
@@ -106,3 +113,4 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
+

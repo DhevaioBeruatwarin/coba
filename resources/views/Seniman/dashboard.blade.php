@@ -15,9 +15,21 @@
         </div>
         <input type="text" class="search-bar" placeholder="Cari karya seni...">
         <div class="header-right">
-            @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
-                <a class="icon-btn" href="{{ route('seniman.profil') }}" title="Profil">👤</a>
-            @endif
+         @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
+    @php
+        $seniman = Auth::guard('seniman')->user();
+        $fotoPath = $seniman->foto 
+            ? asset('storage/foto_seniman/' . $seniman->foto)
+            : asset('assets/defaultprofile.png'); // pastikan file default ada
+    @endphp
+
+    <a href="{{ route('seniman.profil') }}" title="Profil">
+        <img src="{{ $fotoPath }}" 
+             alt="Foto Profil"
+             class="profile-icon"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+    </a>
+@endif
         </div>
     </header>
 
