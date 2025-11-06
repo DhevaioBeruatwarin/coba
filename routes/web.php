@@ -87,7 +87,7 @@ Route::get('/seniman/logout', function () {
 
 // ======================================
 // DASHBOARD ADMIN
-// ======================================
+// =====================================
 Route::prefix('admin')
     ->middleware('auth:admin')
     ->group(function () {

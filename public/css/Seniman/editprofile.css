@@ -1,0 +1,152 @@
+    /* Reset dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* Header */
+.seniman-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #231105;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+      width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ffffff, #ffffff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.logo-text {
+    font-weight: bold;  
+    font-size: 20px;
+    color: #ffffffff;
+}
+
+.header-right .back-link {
+    text-decoration: none;
+    color: #ffffffff;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.header-right .back-link:hover {
+    background-color: #382424ff;
+}
+
+/* Main */
+.profile-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* Card */
+.profile-card {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 700px;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.profile-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    color: #222;
+}
+
+/* Form fields */
+.field-row {
+    margin-bottom: 18px;
+}
+
+.field-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.input-field:focus {
+    border-color: #ffffffff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(162, 155, 254, 0.3);
+}
+
+textarea.input-field {
+    resize: none;
+}
+
+/* Button */
+.btn-upload {
+    background-color: #ff7a00;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-upload:hover {
+       background-color: #ff9d33;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+}
+
+/* Error & Success */
+p, div {
+    font-size: 14px;
+}
+
+ul {
+    padding-left: 20px;
+}

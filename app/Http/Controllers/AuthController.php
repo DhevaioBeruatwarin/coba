@@ -35,12 +35,11 @@ class AuthController extends Controller
             'no_hp.required' => 'Nomor HP wajib diisi.',
             'no_hp.numeric' => 'Nomor HP hanya boleh berisi angka.',
             'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 8 karakter.',
+            'password.min' => 'Password minimal 6 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak sesuai.',
             'role.required' => 'Silakan pilih peran terlebih dahulu.',
             'role.in' => 'Role yang dipilih tidak valid.',
         ]);
-
 
         if ($request->role === 'pembeli') {
             Pembeli::create([
@@ -60,7 +59,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // redirect ke login
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 
@@ -70,7 +68,7 @@ class AuthController extends Controller
         return view('login');
     }
 
-    // Login user
+    // Login user multi-guard
     public function login(Request $request)
     {
         $request->validate([
@@ -81,16 +79,10 @@ class AuthController extends Controller
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
         ]);
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return back()->withErrors([
-                'email' => 'Email atau password salah.',
-            ])->withInput();
-        }
-
 
         $credentials = $request->only('email', 'password');
 
-        // Pembeli
+        // Cek Pembeli
         $pembeli = Pembeli::where('email', $credentials['email'])->first();
         if ($pembeli && Hash::check($credentials['password'], $pembeli->password)) {
             Auth::guard('pembeli')->login($pembeli);
@@ -98,7 +90,7 @@ class AuthController extends Controller
             return redirect()->route('pembeli.dashboard');
         }
 
-        // Seniman
+        // Cek Seniman
         $seniman = Seniman::where('email', $credentials['email'])->first();
         if ($seniman && Hash::check($credentials['password'], $seniman->password)) {
             Auth::guard('seniman')->login($seniman);
@@ -106,7 +98,7 @@ class AuthController extends Controller
             return redirect()->route('seniman.dashboard');
         }
 
-        // Admin
+        // Cek Admin
         $admin = Admin::where('email', $credentials['email'])->first();
         if ($admin && Hash::check($credentials['password'], $admin->password)) {
             Auth::guard('admin')->login($admin);
@@ -114,6 +106,7 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        // Jika semua gagal
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->withInput($request->only('email'));
@@ -131,6 +124,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('landing');
+        return redirect()->route('landing')->with('success', 'Berhasil logout!');
     }
 }

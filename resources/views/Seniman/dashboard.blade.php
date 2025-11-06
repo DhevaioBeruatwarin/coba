@@ -11,36 +11,36 @@
     <header>
         <div class="header-left">
             <div class="logo">
-    <img src="{{ asset('assets/logo.png') }}" 
-         alt="Jogja Artsphere Logo" 
-         style="width: 45px; height: 45px; object-fit: contain;">
-</div>
+                <img src="{{ asset('assets/logo.png') }}" 
+                     alt="Jogja Artsphere Logo" 
+                     style="width: 45px; height: 45px; object-fit: contain;">
+            </div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <input type="text" class="search-bar" placeholder="Cari karya seni...">
         <div class="header-right">
-         @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
-    @php
-        $seniman = Auth::guard('seniman')->user();
-        $fotoPath = $seniman->foto 
-            ? asset('storage/foto_seniman/' . $seniman->foto)
-            : asset('assets/defaultprofile.png'); // pastikan file default ada
-    @endphp
+            @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
+                @php
+                    $seniman = Auth::guard('seniman')->user();
+                    $fotoPath = $seniman->foto 
+                        ? asset('storage/foto_seniman/' . $seniman->foto)
+                        : asset('assets/defaultprofile.png'); // pastikan file default ada
+                @endphp
 
-    <a href="{{ route('seniman.profil') }}" title="Profil">
-        <img src="{{ $fotoPath }}" 
-             alt="Foto Profil"
-             class="profile-icon"
-             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
-    </a>
-@endif
+                <a href="{{ route('seniman.profil') }}" title="Profil">
+                    <img src="{{ $fotoPath }}" 
+                         alt="Foto Profil"
+                         class="profile-icon"
+                         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+                </a>
+            @endif
         </div>
     </header>
 
     <!-- Hero Banner -->
     <div class="hero-banner">
         <div class="hero-content">
-            <h1 class="hero-title">Selamat datang, {{ Auth::guard('seniman')->user()->nama }}</h1>
+            <h1 class="hero-title">Selamat datang, {{ $seniman->nama }}</h1>
             <p class="hero-subtitle">Temukan karya seni dari seniman lain dan bagikan inspirasimu di Jogja Artsphere.</p>
         </div>
         <div class="hero-image"></div>
@@ -53,10 +53,10 @@
 
     <div class="product-section">
         <div class="product-grid">
-            @if($karyaSeni->isEmpty())
+            @if($karya->isEmpty())
                 <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Belum ada karya seni yang ditampilkan.</p>
             @else
-                @foreach($karyaSeni as $item)
+                @foreach($karya as $item)
                     <div class="product-card">
                         <div class="product-image">
                             @if($item->gambar)
@@ -84,25 +84,25 @@
     <div class="product-section">
         <div class="product-grid">
             @php
-                $myWorks = $karyaSeni->where('id_seniman', Auth::guard('seniman')->user()->id_seniman);
+                $myWorks = $karya->where('id_seniman', $seniman->id_seniman);
             @endphp
 
             @if($myWorks->isEmpty())
                 <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Kamu belum menambahkan karya seni.</p>
             @else
-                @foreach($myWorks as $karya)
+                @foreach($myWorks as $karyaItem)
                     <div class="product-card">
                         <div class="product-image">
-                            @if($karya->gambar)
-                                <img src="{{ asset('storage/' . $karya->gambar) }}" alt="{{ $karya->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+                            @if($karyaItem->gambar)
+                                <img src="{{ asset('storage/' . $karyaItem->gambar) }}" alt="{{ $karyaItem->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
                             @else
                                 <div style="width:100%; height:200px; background:#ddd; display:flex; align-items:center; justify-content:center; border-radius:10px;">No Image</div>
                             @endif
                         </div>
                         <div class="product-info">
-                            <div class="product-name">{{ $karya->nama_karya }}</div>
-                            <div class="product-price">Rp {{ number_format($karya->harga, 0, ',', '.') }}</div>
-                            <div class="product-reviews">{{ $karya->terjual ?? 0 }} terjual</div>
+                            <div class="product-name">{{ $karyaItem->nama_karya }}</div>
+                            <div class="product-price">Rp {{ number_format($karyaItem->harga, 0, ',', '.') }}</div>
+                            <div class="product-reviews">{{ $karyaItem->terjual ?? 0 }} terjual</div>
                         </div>
                     </div>
                 @endforeach
