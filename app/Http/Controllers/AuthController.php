@@ -26,7 +26,21 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:6',
             'no_hp' => 'required|numeric|digits_between:10,12',
             'role' => 'required|in:seniman,pembeli',
+        ], [
+            'nama.required' => 'Username tidak boleh kosong.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'no_hp.digits_between' => 'Nomor HP minimal 10 - 12 digit',
+            'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.numeric' => 'Nomor HP hanya boleh berisi angka.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak sesuai.',
+            'role.required' => 'Silakan pilih peran terlebih dahulu.',
+            'role.in' => 'Role yang dipilih tidak valid.',
         ]);
+
 
         if ($request->role === 'pembeli') {
             Pembeli::create([
@@ -62,7 +76,17 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
         ]);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return back()->withErrors([
+                'email' => 'Email atau password salah.',
+            ])->withInput();
+        }
+
 
         $credentials = $request->only('email', 'password');
 

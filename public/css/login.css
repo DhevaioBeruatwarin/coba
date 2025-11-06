@@ -4,6 +4,19 @@
     box-sizing: border-box;
     font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+     .text-danger {
+            color: red;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .is-invalid {
+            border: 1px solid red;
+            background-color: #ffe6e6;
+        }
+        label.text-danger {
+            color: red;
+            font-weight: bold;
+        }
 
 body {
     background-color: #1b0c00;

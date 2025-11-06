@@ -29,37 +29,55 @@
         @csrf
 
         <div class="form-group">
-          <label for="nama">Username</label>
-          <input type="text" id="nama" name="nama" placeholder="Enter your username" required>
+          <label for="nama" class="{{ $errors->has('nama') ? 'error-label' : '' }}">Username</label>
+          <input type="text" id="nama" name="nama" placeholder="Enter your username" value="{{ old('nama') }}" class="{{ $errors->has('nama') ? 'error-input' : '' }}" required>
+          @error('nama')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <label for="email" class="{{ $errors->has('email') ? 'error-label' : '' }}">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" class="{{ $errors->has('email') ? 'error-input' : '' }}" required>
+          @error('email')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <div class="form-group">
-          <label for="no_hp">Phone Number</label>
-          <input type="tel" id="no_hp" name="no_hp" placeholder="Enter your phone number" required>
+          <label for="no_hp" class="{{ $errors->has('no_hp') ? 'error-label' : '' }}">Phone Number</label>
+          <input type="tel" id="no_hp" name="no_hp" placeholder="Enter your phone number" value="{{ old('no_hp') }}" class="{{ $errors->has('no_hp') ? 'error-input' : '' }}" required>
+          @error('no_hp')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter password" required>
+          <label for="password" class="{{ $errors->has('password') ? 'error-label' : '' }}">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter password" class="{{ $errors->has('password') ? 'error-input' : '' }}" required>
+          @error('password')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <div class="form-group">
-          <label for="password_confirmation">Confirm Password</label>
-          <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm password" required>
+          <label for="password_confirmation" class="{{ $errors->has('password_confirmation') ? 'error-label' : '' }}">Confirm Password</label>
+          <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm password" class="{{ $errors->has('password_confirmation') ? 'error-input' : '' }}" required>
+          @error('password_confirmation')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <div class="form-group">
-          <label for="role">Role</label>
-          <select id="role" name="role" required>
+          <label for="role" class="{{ $errors->has('role') ? 'error-label' : '' }}">Role</label>
+          <select id="role" name="role" class="{{ $errors->has('role') ? 'error-input' : '' }}" required>
             <option value="">Select role</option>
-            <option value="seniman">Seniman</option>
-            <option value="pembeli">Pembeli</option>
+            <option value="seniman" {{ old('role') == 'seniman' ? 'selected' : '' }}>Seniman</option>
+            <option value="pembeli" {{ old('role') == 'pembeli' ? 'selected' : '' }}>Pembeli</option>
           </select>
+          @error('role')
+            <small class="error-text">{{ $message }}</small>
+          @enderror
         </div>
 
         <button type="submit" class="join">Join us</button>
