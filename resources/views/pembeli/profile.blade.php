@@ -3,131 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Profil Pembeli</title>
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/Seniman/profile.css') }}">
+    <style>
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-overlay.show { display: flex; }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="header-left">
-            <div class="logo">#</div>
-            <div class="logo-text">JOGJA ARTSPHERE</div>
+<body> 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center text-white">
+            <div class="spinner mx-auto mb-3"></div>
+            <p>Mengupload foto...</p>
         </div>
-        <div class="header-right">
-            <a href="{{ route('pembeli.dashboard') }}" class="back-link">Kembali</a>
-        </div>
-    </header>
+    </div>
 
-    <main class="profile-page">
-        <aside class="profile-sidebar">
-            <div class="profile-menu-title">My Account</div>
-            <ul class="profile-menu">
-                <li><a href="#" class="active">Profile</a></li>
-                <li><a href="#">Bank and Card</a></li>
-                <li><a href="#">Address</a></li>
-                <li><a href="#">Change Password</a></li>
-                <li><a href="#">My Order</a></li>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar col-md-3">
+            <h5>My Profile</h5>
+            <ul>
+                <li><a href="{{ route('pembeli.profil') }}" class="active">Profil</a></li>
+                <li><a href="#">##</a></li>
+                <li><a href="{{ route('pembeli.profil.edit') }}">Edit Profil</a></li>
+                <li><a href="{{ route('pembeli.logout') }}">Keluar</a></li>
             </ul>
-        </aside>
+        </div>
 
-        <section class="profile-card">
-            <div class="profile-header-row">
-                <h2 class="profile-title">My Profile</h2>
-            </div>
-            <div class="profile-content">
-                <div class="profile-fields">
-                    <div class="field-row">
-                        <div class="field-label">Username</div>
-                        <div class="field-value">{{ $pembeli->nama ?? $pembeli->name ?? '-' }}</div>
-                        <div class="field-action">&nbsp;</div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-label">Email</div>
-                        <div class="field-value">{{ $pembeli->email }}</div>
-                        <div class="field-action">&nbsp;</div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-label">Phone Number</div>
-                        <div class="field-value">{{ $pembeli->telepon ? substr($pembeli->telepon,0,3) . 'X - XXXX - XXXX' : '08XX - XXXX - XXXX' }}</div>
-                        <div class="field-action">edit</div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-label">Gender</div>
-                        <div class="field-value">
-                            <div class="gender-group">
-                                <label><input type="radio" name="gender" disabled> Male</label>
-                                <label><input type="radio" name="gender" disabled> Female</label>
-                            </div>
-                        </div>
-                        <div class="field-action">&nbsp;</div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-label">Date of Birth</div>
-                        <div class="field-value">DD/MM/YYYY</div>
-                        <div class="field-action">edit</div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-label">Address</div>
-                        <div class="field-value">{{ $pembeli->alamat ?? '-' }}</div>
-                        <div class="field-action">edit</div>
-                    </div>
+        <!-- Main content -->
+        <div class="main-content flex-fill">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div class="avatar-card">
-                    <div class="avatar-circle">👤</div>
-                    <button class="btn-upload">Choose Image</button>
-                </div>
-            </div>
-        </section>
-    </main>
+            @endif
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Jogja Artsphere</h3>
-                <p>Tentang kami</p>
-                <p>Blog/berita</p>
-                <p>Promo Hari Ini</p>
-                <p>Promo Guncang</p>
-                <p>Karya Seni Asli Jogja</p>
-                <p>Affiliate Program</p>
-            </div>
-            <div class="footer-section">
-                <h3>Bantuan</h3>
-                <p>Telepon<br>0823-5314-0</p>
-                <p>Email<br>Customer.care@gmail.com</p>
-                <div class="social-icons">
-                    <div class="social-icon">f</div>
-                    <div class="social-icon">t</div>
-                    <div class="social-icon">in</div>
-                    <div class="social-icon">ig</div>
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            </div>
-            <div class="footer-section">
-                <h3>Metode Pembayaran</h3>
-                <div class="payment-methods">
-                    <div class="payment-icon">BCA</div>
-                    <div class="payment-icon">BRI</div>
-                    <div class="payment-icon">VISA</div>
-                    <div class="payment-icon">Gopay</div>
-                    <div class="payment-icon">OVO</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            </div>
-            <div class="footer-section">
-                <h3>Metode Pengiriman</h3>
-                <div class="payment-methods">
-                    <div class="payment-icon">JNE</div>
-                    <div class="payment-icon">POS</div>
-                    <div class="payment-icon">TIKI</div>
-                    <div class="payment-icon">Sicepat</div>
+            @endif
+
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="col-md-8">
+                    <h3 class="mb-4">Profil Saya</h3>
+                    <div class="mb-3"><strong>Nama:</strong> {{ $pembeli->nama }}</div>
+                    <div class="mb-3"><strong>Email:</strong> {{ $pembeli->email }}</div>
+                    <div class="mb-3"><strong>No. Telepon:</strong> {{ $pembeli->no_hp ?? '-' }}</div>
+                    <div class="mb-3"><strong>Alamat:</strong> {{ $pembeli->alamat ?? '-' }}</div>
+                    <div class="mb-3"><strong>Bio:</strong> {{ $pembeli->bio ?? 'Belum ada bio' }}</div>
+                </div>
+
+                <div class="profile-photo col-md-4">
+                    @if($pembeli->foto)
+                        <img src="{{ asset('storage/foto_pembeli/' . $pembeli->foto) }}?v={{ time() }}" 
+                             alt="Foto Pembeli" 
+                             id="profileImage"
+                             style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
+                    @else
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                             alt="Avatar Default" 
+                             id="profileImage"
+                             style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
+                    @endif
+                    <form action="{{ route('pembeli.profil.update_foto') }}" 
+                          method="POST" 
+                          enctype="multipart/form-data" 
+                          id="fotoForm">
+                        @csrf
+                        <input type="file" 
+                               name="foto" 
+                               id="foto" 
+                               accept="image/jpeg,image/png,image/jpg,image/gif" 
+                               hidden>
+                        <label for="foto" class="btn-upload" style="cursor: pointer;">Pilih Gambar</label>
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p class="footer-text">Jogja ArtSphere – Nyaman Belanja Online, Nyata dari Jogja. Jogja ArtSphere adalah platform belanja online kreatif yang menghadirkan karya orisinal dari seniman dan UMKM Jogja...</p>
-            <div class="qr-code">QR</div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Jogja Artsphere</h5>
+                    <p>Tentang Kami</p>
+                    <p>Promo Hari Ini</p>
+                    <p>Karya Asli Jogja</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Bantuan</h5>
+                    <p>Telepon: 0823-5314-0</p>
+                    <p>Email: Customer.care@gmail.com</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Metode Pembayaran</h5>
+                    <p>BCA, BRI, Mandiri, Visa, Gopay, dll.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Ikuti Kami</h5>
+                    <p>Instagram | Facebook | X</p>
+                </div>
+            </div>
+            <hr style="background-color:#444;">
+            <p class="mt-3">© 2025 Jogja Artsphere — Dukung Karya Lokal</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                if (file.size > 2048000) {
+                    alert('Ukuran foto maksimal 2MB');
+                    e.target.value = '';
+                    return;
+                }
+                
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Format foto harus JPEG, PNG, JPG, atau GIF');
+                    e.target.value = '';
+                    return;
+                }
+                
+                document.getElementById('loadingOverlay').classList.add('show');
+                document.getElementById('fotoForm').submit();
+            }
+        });
+
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 </html>
-
-

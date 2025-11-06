@@ -21,15 +21,15 @@
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
             <button class="icon-btn">🛒</button>
-                   @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
+                   @if(\Illuminate\Support\Facades\Auth::guard('pembeli')->check())
     @php
-        $seniman = Auth::guard('seniman')->user();
-        $fotoPath = $seniman->foto 
-            ? asset('storage/foto_seniman/' . $seniman->foto)
+        $pembeli = Auth::guard('pembeli')->user();
+        $fotoPath = $pembeli->foto 
+            ? asset('storage/foto_pembeli/' . $pembeli->foto)
             : asset('assets/defaultprofile.png'); // pastikan file default ada
     @endphp
 
-    <a href="{{ route('seniman.profil') }}" title="Profil">
+    <a href="{{ route('pembeli.profil') }}" title="Profil">
         <img src="{{ $fotoPath }}" 
              alt="Foto Profil"
              class="profile-icon"

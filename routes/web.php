@@ -41,8 +41,14 @@ Route::prefix('pembeli')
         Route::get('/profil/edit', [PembeliController::class, 'edit'])->name('pembeli.profil.edit');
         Route::put('/profil/update', [PembeliController::class, 'update'])->name('pembeli.profil.update');
 
+
         // Upload foto - GANTI JADI POST
         Route::post('/profil/foto', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
+        //logout
+        Route::get('/pembeli/logout', function () {
+            Auth::guard('pembeli')->logout();
+            return redirect()->route('login')->with('success', 'Berhasil logout!');
+        })->name('pembeli.logout');
     });
 
 
