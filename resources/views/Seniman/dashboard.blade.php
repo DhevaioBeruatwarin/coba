@@ -10,7 +10,11 @@
     <!-- Header -->
     <header>
         <div class="header-left">
-            <div class="logo">🎨</div>
+            <div class="logo">
+    <img src="{{ asset('assets/logo.png') }}" 
+         alt="Jogja Artsphere Logo" 
+         style="width: 45px; height: 45px; object-fit: contain;">
+</div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <input type="text" class="search-bar" placeholder="Cari karya seni...">

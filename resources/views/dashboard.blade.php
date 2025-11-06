@@ -10,16 +10,32 @@
     <!-- Header -->
     <header>
         <div class="header-left">
-            <div class="logo">#</div>
+              <<div class="logo">
+    <img src="{{ asset('assets/logo.png') }}" 
+         alt="Jogja Artsphere Logo" 
+         style="width: 45px; height: 45px; object-fit: contain;">
+</div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <input type="text" class="search-bar" placeholder="Search">
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
             <button class="icon-btn">🛒</button>
-            @if(\Illuminate\Support\Facades\Auth::guard('pembeli')->check())
-                <a class="icon-btn" href="{{ route('pembeli.profil') }}" title="Profil">👤</a>
-            @endif
+                   @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
+    @php
+        $seniman = Auth::guard('seniman')->user();
+        $fotoPath = $seniman->foto 
+            ? asset('storage/foto_seniman/' . $seniman->foto)
+            : asset('assets/defaultprofile.png'); // pastikan file default ada
+    @endphp
+
+    <a href="{{ route('seniman.profil') }}" title="Profil">
+        <img src="{{ $fotoPath }}" 
+             alt="Foto Profil"
+             class="profile-icon"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+    </a>
+@endif
         </div>
     </header>
 
