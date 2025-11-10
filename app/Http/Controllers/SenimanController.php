@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\Seniman;
+use App\Models\KaryaSeni;
 
 class SenimanController extends Controller
 {
@@ -19,10 +20,12 @@ class SenimanController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // PENTING: Ambil data fresh dari database setiap kali
+        // Ambil data fresh dari database
         $seniman = Seniman::find($seniman->id_seniman);
 
-        // Set header untuk mencegah cache
+        // Tambahan: agar foto profil bisa muncul di navbar
+        session(['seniman_foto' => $seniman->foto]);
+
         return response()
             ->view('Seniman.profile', compact('seniman'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -39,7 +42,6 @@ class SenimanController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil data fresh dari database
         $seniman = Seniman::find($seniman->id_seniman);
 
         return view('Seniman.edit_profil', compact('seniman'));
@@ -62,7 +64,6 @@ class SenimanController extends Controller
         ]);
 
         try {
-            // Update langsung ke database dengan DB facade
             DB::table('seniman')
                 ->where('id_seniman', $seniman->id_seniman)
                 ->update([
@@ -73,11 +74,11 @@ class SenimanController extends Controller
                     'updated_at' => now()
                 ]);
 
-            // Refresh model dari database
             $seniman = Seniman::find($seniman->id_seniman);
-
-            // Update session auth dengan data terbaru
             Auth::guard('seniman')->setUser($seniman);
+
+            // Update foto navbar jika ada
+            session(['seniman_foto' => $seniman->foto]);
 
             return redirect()->route('seniman.profil')->with('success', 'Profil berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -104,10 +105,9 @@ class SenimanController extends Controller
         ]);
 
         try {
-            // Ambil data seniman dari database
             $senimanData = Seniman::find($seniman->id_seniman);
 
-            // Hapus foto lama jika ada
+            // Hapus foto lama
             if ($senimanData->foto && Storage::disk('public')->exists('foto_seniman/' . $senimanData->foto)) {
                 Storage::disk('public')->delete('foto_seniman/' . $senimanData->foto);
             }
@@ -117,7 +117,6 @@ class SenimanController extends Controller
             $filename = time() . '_' . $seniman->id_seniman . '.' . $file->getClientOriginalExtension();
             $file->storeAs('foto_seniman', $filename, 'public');
 
-            // Update database langsung
             DB::table('seniman')
                 ->where('id_seniman', $seniman->id_seniman)
                 ->update([
@@ -125,13 +124,12 @@ class SenimanController extends Controller
                     'updated_at' => now()
                 ]);
 
-            // Refresh model dari database
             $senimanData = Seniman::find($seniman->id_seniman);
-
-            // Update session auth dengan data terbaru
             Auth::guard('seniman')->setUser($senimanData);
 
-            // Redirect dengan timestamp untuk force reload
+            // Tambahan: simpan di session supaya navbar langsung update
+            session(['seniman_foto' => $filename]);
+
             return redirect()
                 ->route('seniman.profil')
                 ->with('success', 'Foto profil berhasil diperbarui!')
@@ -140,4 +138,12 @@ class SenimanController extends Controller
             return redirect()->route('seniman.profil')->with('error', 'Gagal mengupload foto: ' . $e->getMessage());
         }
     }
+
+    public function karyaSaya()
+    {
+        $seniman = auth()->guard('seniman')->user();
+        $karya = KaryaSeni::where('id_seniman', $seniman->id_seniman)->get();
+        return view('Seniman.karya.index', compact('karya'));
+    }
+
 }

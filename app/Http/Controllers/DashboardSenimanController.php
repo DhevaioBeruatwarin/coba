@@ -44,11 +44,15 @@ class DashboardSenimanController extends Controller
         $seniman->nama = $request->nama;
         $seniman->bio = $request->bio;
 
+        // Upload foto baru
         if ($request->hasFile('foto')) {
-            if ($seniman->foto) {
-                Storage::delete('public/foto_seniman/' . $seniman->foto);
+            // Hapus foto lama jika ada
+            if ($seniman->foto && Storage::disk('public')->exists('foto_seniman/' . $seniman->foto)) {
+                Storage::disk('public')->delete('foto_seniman/' . $seniman->foto);
             }
-            $fotoName = time() . '.' . $request->foto->extension();
+
+            // Simpan foto baru
+            $fotoName = time() . '_' . $seniman->id_seniman . '.' . $request->foto->extension();
             $request->foto->storeAs('public/foto_seniman', $fotoName);
             $seniman->foto = $fotoName;
         }
@@ -75,10 +79,13 @@ class DashboardSenimanController extends Controller
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $gambarName = time() . '.' . $request->gambar->extension();
+        // Simpan gambar karya
+        $gambarName = time() . '_' . $seniman->id_seniman . '.' . $request->gambar->extension();
         $request->gambar->storeAs('public/karya_seni', $gambarName);
 
+        $kodeSeni = 'KS' . time() . rand(100, 999);
         KaryaSeni::create([
+            'kode_seni' => $kodeSeni,
             'id_seniman' => $seniman->id_seniman,
             'nama_karya' => $request->judul,
             'deskripsi' => $request->deskripsi,
@@ -92,7 +99,9 @@ class DashboardSenimanController extends Controller
     public function editKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
         return view('Seniman.karya.edit', compact('karya'));
     }
@@ -100,7 +109,9 @@ class DashboardSenimanController extends Controller
     public function updateKarya(Request $request, $kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -113,11 +124,13 @@ class DashboardSenimanController extends Controller
         $karya->deskripsi = $request->deskripsi;
         $karya->harga = $request->harga;
 
+        // Update gambar jika ada file baru
         if ($request->hasFile('gambar')) {
-            if ($karya->gambar) {
-                Storage::delete('public/karya_seni/' . $karya->gambar);
+            if ($karya->gambar && Storage::disk('public')->exists('karya_seni/' . $karya->gambar)) {
+                Storage::disk('public')->delete('karya_seni/' . $karya->gambar);
             }
-            $gambarName = time() . '.' . $request->gambar->extension();
+
+            $gambarName = time() . '_' . $karya->kode_seni . '.' . $request->gambar->extension();
             $request->gambar->storeAs('public/karya_seni', $gambarName);
             $karya->gambar = $gambarName;
         }
@@ -130,14 +143,17 @@ class DashboardSenimanController extends Controller
     public function destroyKarya($kode_seni)
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('kode_seni', $kode_seni)->where('id_seniman', $seniman->id_seniman)->firstOrFail();
+        $karya = KaryaSeni::where('kode_seni', $kode_seni)
+            ->where('id_seniman', $seniman->id_seniman)
+            ->firstOrFail();
 
-        if ($karya->gambar) {
-            Storage::delete('public/karya_seni/' . $karya->gambar);
+        // Hapus file gambar dari storage jika ada
+        if ($karya->gambar && Storage::disk('public')->exists('karya_seni/' . $karya->gambar)) {
+            Storage::disk('public')->delete('karya_seni/' . $karya->gambar);
         }
 
         $karya->delete();
 
-        return redirect()->route('seniman.dashboard')->with('success', 'Karya seni berhasil dihapus!');
+        return redirect()->route('seniman.karya.index')->with('success', 'Karya seni berhasil dihapus!');
     }
 }

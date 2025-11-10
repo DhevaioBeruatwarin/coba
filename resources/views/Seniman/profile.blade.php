@@ -54,7 +54,7 @@
             <h5>My Shop</h5>
             <ul>
                 <li><a href="{{ route('seniman.profil') }}" class="active">Profil</a></li>
-                <li><a href="#">Karya Saya</a></li>
+                <li><a href="{{ route('seniman.karya.index') }}">Karya Saya</a></li>
                 <li><a href="{{ route('seniman.karya.upload') }}">Upload Karya</a></li>
                 <li><a href="{{ route('seniman.edit.profil') }}">Edit Profil</a></li>
                 <li><a href="{{ route('seniman.logout') }}">Keluar</a></li>

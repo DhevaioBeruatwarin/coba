@@ -15,7 +15,8 @@ class KaryaSeni extends Model
         'kode_seni',
         'nama_karya',
         'harga',
-        'id_seniman'
+        'id_seniman',
+        'gambar'
     ];
 
     // Relasi ke seniman (setiap karya milik satu seniman)

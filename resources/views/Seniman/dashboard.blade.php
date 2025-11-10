@@ -60,7 +60,7 @@
                     <div class="product-card">
                         <div class="product-image">
                             @if($item->gambar)
-                                <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+                                <img src="{{ asset('storage/karya_seni/' . $item->gambar) }}" alt="{{ $item->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
                             @else
                                 <div style="width:100%; height:200px; background:#ddd; display:flex; align-items:center; justify-content:center; border-radius:10px;">No Image</div>
                             @endif
@@ -94,7 +94,7 @@
                     <div class="product-card">
                         <div class="product-image">
                             @if($karyaItem->gambar)
-                                <img src="{{ asset('storage/' . $karyaItem->gambar) }}" alt="{{ $karyaItem->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+                                <img src="{{ asset('storage/karya_seni/' . $karyaItem->gambar) }}" alt="{{ $karyaItem->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
                             @else
                                 <div style="width:100%; height:200px; background:#ddd; display:flex; align-items:center; justify-content:center; border-radius:10px;">No Image</div>
                             @endif

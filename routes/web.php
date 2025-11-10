@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardPembeliController;
 use App\Http\Controllers\DashboardSenimanController;
+use App\Http\Controllers\KaryaSeniController;
 use App\Http\Controllers\PembeliController;
 use App\Http\Controllers\SenimanController;
 
@@ -71,12 +72,13 @@ Route::prefix('seniman')
         Route::post('/profil/foto', [SenimanController::class, 'updateFoto'])->name('seniman.profil.foto.update');
 
         // CRUD Karya Seniman
+        Route::get('/seniman/karya', [SenimanController::class, 'karyaSaya'])->name('seniman.karya.index');
         Route::get('/karya/upload', [DashboardSenimanController::class, 'createKarya'])->name('seniman.karya.upload');
         Route::post('/karya/store', [DashboardSenimanController::class, 'storeKarya'])->name('seniman.karya.store');
         Route::get('/karya/edit/{kode_seni}', [DashboardSenimanController::class, 'editKarya'])->name('seniman.karya.edit');
         Route::put('/karya/update/{kode_seni}', [DashboardSenimanController::class, 'updateKarya'])->name('seniman.karya.update');
         Route::delete('/karya/delete/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
-
+        Route::delete('/karya/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
         // Detail Karya
         Route::get('/karya/{id}', function ($id) {
             return view('Seniman.detail_karya', ['id' => $id]);
@@ -89,6 +91,7 @@ Route::get('/seniman/logout', function () {
     Auth::guard('seniman')->logout();
     return redirect()->route('login')->with('success', 'Berhasil logout!');
 })->name('seniman.logout');
+
 
 
 // ======================================
