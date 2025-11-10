@@ -10,7 +10,7 @@
     <!-- Header -->
     <header>
         <div class="header-left">
-              <<div class="logo">
+              <div class="logo">
     <img src="{{ asset('assets/logo.png') }}" 
          alt="Jogja Artsphere Logo" 
          style="width: 45px; height: 45px; object-fit: contain;">
@@ -60,7 +60,7 @@
             @else
                <!-- Ganti bagian product-card di dashboard seniman dengan ini: -->
 
-@foreach($karya as $item)
+@foreach($karyaSeni as $item)
     <a href="{{ route('karya.detail', $item->kode_seni) }}" class="product-card" style="text-decoration: none; color: inherit;">
         <div class="product-image">
             @if($item->gambar)
