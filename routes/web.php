@@ -16,7 +16,6 @@ Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
-
 // ======================================
 // AUTH ROUTES (LOGIN, REGISTER, LOGOUT)
 // ======================================
@@ -25,7 +24,6 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
 
 // ======================================
 // DASHBOARD PEMBELI
@@ -41,17 +39,14 @@ Route::prefix('pembeli')
         Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
         Route::get('/profil/edit', [PembeliController::class, 'edit'])->name('pembeli.profil.edit');
         Route::put('/profil/update', [PembeliController::class, 'update'])->name('pembeli.profil.update');
-
-
-        // Upload foto - GANTI JADI POST
         Route::post('/profil/foto', [PembeliController::class, 'updateFoto'])->name('pembeli.profil.update_foto');
-        //logout
-        Route::get('/pembeli/logout', function () {
+
+        // Logout Pembeli
+        Route::get('/logout', function () {
             Auth::guard('pembeli')->logout();
             return redirect()->route('login')->with('success', 'Berhasil logout!');
         })->name('pembeli.logout');
     });
-
 
 // ======================================
 // DASHBOARD SENIMAN
@@ -67,36 +62,31 @@ Route::prefix('seniman')
         Route::get('/profil', [SenimanController::class, 'profile'])->name('seniman.profil');
         Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
         Route::put('/profil/update', [SenimanController::class, 'update'])->name('seniman.profil.update');
-
-        // Upload foto - GANTI JADI POST
         Route::post('/profil/foto', [SenimanController::class, 'updateFoto'])->name('seniman.profil.foto.update');
 
         // CRUD Karya Seniman
-        Route::get('/seniman/karya', [SenimanController::class, 'karyaSaya'])->name('seniman.karya.index');
+        Route::get('/karya', [SenimanController::class, 'karyaSaya'])->name('seniman.karya.index');
         Route::get('/karya/upload', [DashboardSenimanController::class, 'createKarya'])->name('seniman.karya.upload');
         Route::post('/karya/store', [DashboardSenimanController::class, 'storeKarya'])->name('seniman.karya.store');
         Route::get('/karya/edit/{kode_seni}', [DashboardSenimanController::class, 'editKarya'])->name('seniman.karya.edit');
         Route::put('/karya/update/{kode_seni}', [DashboardSenimanController::class, 'updateKarya'])->name('seniman.karya.update');
         Route::delete('/karya/delete/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
-        Route::delete('/karya/{kode_seni}', [DashboardSenimanController::class, 'destroyKarya'])->name('seniman.karya.delete');
-        // Detail Karya
-        Route::get('/karya/{id}', function ($id) {
-            return view('Seniman.detail_karya', ['id' => $id]);
-        })->name('seniman.karya.detail');
+
+        // Logout Seniman
+        Route::get('/logout', function () {
+            Auth::guard('seniman')->logout();
+            return redirect()->route('login')->with('success', 'Berhasil logout!');
+        })->name('seniman.logout');
     });
 
-//logout
-
-Route::get('/seniman/logout', function () {
-    Auth::guard('seniman')->logout();
-    return redirect()->route('login')->with('success', 'Berhasil logout!');
-})->name('seniman.logout');
-
-
+// ======================================
+// DETAIL KARYA (Publik & Pembeli bisa akses)
+// ======================================
+Route::get('/karya/{kode_seni}', [KaryaSeniController::class, 'show'])->name('karya.detail');
 
 // ======================================
 // DASHBOARD ADMIN
-// =====================================
+// ======================================
 Route::prefix('admin')
     ->middleware('auth:admin')
     ->group(function () {
@@ -106,7 +96,6 @@ Route::prefix('admin')
             return view('Admin.dashboard');
         })->name('admin.dashboard');
     });
-
 
 // ======================================
 // REDIRECT AFTER LOGIN
@@ -122,4 +111,3 @@ Route::get('/redirect-after-login', function () {
         return redirect()->route('landing');
     }
 })->name('redirect.after.login');
-

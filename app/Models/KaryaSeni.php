@@ -2,32 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KaryaSeni extends Model
 {
+    use HasFactory;
+
     protected $table = 'karya_seni';
     protected $primaryKey = 'kode_seni';
-    public $incrementing = false; // karena kode_seni bukan auto-increment
+    public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
         'kode_seni',
         'nama_karya',
         'harga',
+        'deskripsi',
         'id_seniman',
         'gambar'
     ];
 
-    // Relasi ke seniman (setiap karya milik satu seniman)
     public function seniman()
     {
-        return $this->belongsTo(Seniman::class, 'id_seniman', 'id_seniman');
+        return $this->belongsTo(Seniman::class, 'id_seniman');
     }
 
-    // Relasi ke transaksi (karya bisa dijual dalam banyak transaksi)
-    public function transaksi()
+    public function reviews()
     {
-        return $this->hasMany(Transaksi::class, 'kode_seni', 'kode_seni');
+        return $this->hasMany(Review::class, 'kode_seni', 'kode_seni');
     }
 }
