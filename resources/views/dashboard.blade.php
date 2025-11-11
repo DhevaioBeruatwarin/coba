@@ -17,7 +17,10 @@
 </div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
-        <input type="text" class="search-bar" placeholder="Search">
+        <form action="{{ route('dashboard.seniman.search') }}" method="GET" style="display:inline;">
+    <input type="text" name="query" class="search-bar" placeholder="Cari karya..." value="{{ request('query') }}">
+</form>
+
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
             <button class="icon-btn">🛒</button>
@@ -58,7 +61,7 @@
             @if($karyaSeni->isEmpty())
                 <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Belum ada karya seni tersedia.</p>
             @else
-               <!-- Ganti bagian product-card di dashboard seniman dengan ini: -->
+              
 
 @foreach($karyaSeni as $item)
     <a href="{{ route('karya.detail', $item->kode_seni) }}" class="product-card" style="text-decoration: none; color: inherit;">

@@ -17,7 +17,9 @@
             </div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
-        <input type="text" class="search-bar" placeholder="Cari karya seni...">
+         <form action="{{ route('dashboard.seniman.search') }}" method="GET" style="display:inline;">
+    <input type="text" name="query" class="search-bar" placeholder="Cari karya..." value="{{ request('query') }}">
+</form>
         <div class="header-right">
             @if(\Illuminate\Support\Facades\Auth::guard('seniman')->check())
                 @php
@@ -78,40 +80,7 @@
         </div>
     </div>
 
-    <!-- Section: Karya Saya -->
-    <div class="section-title">
-        <span>Karya saya</span>
-    </div>
-
-    <div class="product-section">
-        <div class="product-grid">
-            @php
-                $myWorks = $karya->where('id_seniman', $seniman->id_seniman);
-            @endphp
-
-            @if($myWorks->isEmpty())
-                <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Kamu belum menambahkan karya seni.</p>
-            @else
-                @foreach($myWorks as $karyaItem)
-                    <div class="product-card">
-                        <div class="product-image">
-                            @if($karyaItem->gambar)
-                                <img src="{{ asset('storage/karya_seni/' . $karyaItem->gambar) }}" alt="{{ $karyaItem->nama_karya }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
-                            @else
-                                <div style="width:100%; height:200px; background:#ddd; display:flex; align-items:center; justify-content:center; border-radius:10px;">No Image</div>
-                            @endif
-                        </div>
-                        <div class="product-info">
-                            <div class="product-name">{{ $karyaItem->nama_karya }}</div>
-                            <div class="product-price">Rp {{ number_format($karyaItem->harga, 0, ',', '.') }}</div>
-                            <div class="product-reviews">{{ $karyaItem->terjual ?? 0 }} terjual</div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-    </div>
-
+   
     <!-- Footer -->
     <footer>
         <div class="footer-content">

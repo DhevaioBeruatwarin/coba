@@ -19,13 +19,9 @@
     </div>
 
     <div style="flex:1; margin:0 20px;">
-        <input type="text" placeholder="Cari karya seni..." 
-               style="  background-color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 16px;
-    width: 200px;
-    font-size: 13px;">
+         <form action="{{ route('dashboard.pembeli.search') }}" method="GET" style="display:inline;">
+    <input type="text" name="query" class="search-bar" placeholder="Cari karya..." value="{{ request('query') }}">
+</form>
     </div>
 
     <div style="display:flex; align-items:center; gap:15px;">

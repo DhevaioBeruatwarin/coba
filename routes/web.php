@@ -34,6 +34,7 @@ Route::prefix('pembeli')
 
         // Dashboard Pembeli
         Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('pembeli.dashboard');
+        Route::get('/dashboard/pembeli/search', [KaryaSeniController::class, 'search'])->name('dashboard.seniman.search');
 
         // Profil Pembeli
         Route::get('/profil', [PembeliController::class, 'profil'])->name('pembeli.profil');
@@ -57,7 +58,7 @@ Route::prefix('seniman')
 
         // Dashboard Seniman
         Route::get('/dashboard', [DashboardSenimanController::class, 'index'])->name('seniman.dashboard');
-
+        Route::get('/dashboard/pembeli/search', [KaryaSeniController::class, 'search'])->name('dashboard.pembeli.search');
         // Profil Seniman
         Route::get('/profil', [SenimanController::class, 'profile'])->name('seniman.profil');
         Route::get('/profil/edit', [SenimanController::class, 'edit'])->name('seniman.edit.profil');
@@ -83,6 +84,8 @@ Route::prefix('seniman')
 // DETAIL KARYA (Publik & Pembeli bisa akses)
 // ======================================
 Route::get('/karya/{kode_seni}', [KaryaSeniController::class, 'show'])->name('karya.detail');
+
+
 
 // ======================================
 // DASHBOARD ADMIN

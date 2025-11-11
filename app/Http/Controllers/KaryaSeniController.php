@@ -4,40 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\KaryaSeni;
-use App\Models\Seniman;
 use Illuminate\Support\Facades\Auth;
 
 class KaryaSeniController extends Controller
 {
-    // Menampilkan detail karya untuk pembeli/umum
+    // Tampilkan detail karya untuk pembeli atau seniman
     public function show($kode_seni)
     {
-        // Ambil karya berdasarkan kode_seni dengan relasi seniman dan rating (jika ada)
-        $karya = KaryaSeni::with(['seniman', 'reviews'])->where('kode_seni', $kode_seni)->firstOrFail();
 
-        // Hitung rata-rata rating, kalau belum ada maka null
+
+        $karya = KaryaSeni::with('seniman')->where('kode_seni', $kode_seni)->firstOrFail();
+
         $averageRating = null;
         if ($karya->reviews && $karya->reviews->count() > 0) {
             $averageRating = round($karya->reviews->avg('nilai'), 1);
         }
 
-        // Ambil karya lain dari seniman yang sama (untuk rekomendasi)
-        $karyaSeniman = KaryaSeni::where('id_seniman', $karya->id_seniman)
-            ->where('kode_seni', '!=', $kode_seni)
-            ->limit(4)
-            ->get();
+        // Jika login sebagai seniman
+        if (Auth::guard('seniman')->check()) {
+            return view('Seniman.detail', compact('karya', 'averageRating'));
+        }
 
-        // Ambil karya sejenis/random untuk rekomendasi lainnya
-        $karyaLainnya = KaryaSeni::where('kode_seni', '!=', $kode_seni)
-            ->latest()
-            ->limit(8)
-            ->get();
+        // Jika login sebagai pembeli
+        if (Auth::guard('pembeli')->check()) {
+            $karyaSeniman = KaryaSeni::where('id_seniman', $karya->id_seniman)
+                ->where('kode_seni', '!=', $kode_seni)
+                ->limit(4)
+                ->get();
 
-        // Kirim semua data ke view
-        return view('Seniman.detail_karya', compact('karya', 'karyaSeniman', 'karyaLainnya', 'averageRating'));
+            $karyaLainnya = KaryaSeni::where('kode_seni', '!=', $kode_seni)
+                ->latest()
+                ->limit(8)
+                ->get();
+
+            return view('Seniman.detail_karya', compact('karya', 'karyaSeniman', 'karyaLainnya', 'averageRating'));
+        }
+
+        // Jika tidak login
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
     }
 
-    // Menampilkan dashboard seniman
+
+
+    // Dashboard seniman
     public function index()
     {
         $seniman = Auth::guard('seniman')->user();
@@ -46,7 +55,7 @@ class KaryaSeniController extends Controller
         return view('Seniman.dashboard', compact('karya', 'seniman'));
     }
 
-    // Menyimpan karya baru
+    // Tambah karya baru
     public function store(Request $request)
     {
         $request->validate([
@@ -57,10 +66,14 @@ class KaryaSeniController extends Controller
         ]);
 
         $seniman = Auth::guard('seniman')->user();
+
+        // Simpan file gambar ke storage/public/karya_seni
         $path = $request->file('gambar')->store('karya_seni', 'public');
 
+        // Buat kode karya unik
         $kodeSeni = 'KS' . time() . rand(100, 999);
 
+        // Simpan ke database
         KaryaSeni::create([
             'kode_seni' => $kodeSeni,
             'id_seniman' => $seniman->id_seniman,
@@ -73,7 +86,7 @@ class KaryaSeniController extends Controller
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil diupload!');
     }
 
-    // Menghapus karya
+    // Hapus karya
     public function destroy($kode_seni)
     {
         $karya = KaryaSeni::where('kode_seni', $kode_seni)->firstOrFail();
@@ -81,4 +94,38 @@ class KaryaSeniController extends Controller
 
         return redirect()->route('seniman.dashboard')->with('success', 'Karya berhasil dihapus!');
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $userSeniman = Auth::guard('seniman')->user();
+        $userPembeli = Auth::guard('pembeli')->user();
+
+        if ($userPembeli) {
+            // Jika pembeli yang login → cari semua karya
+            $karyaSeni = KaryaSeni::where('nama_karya', 'like', "%{$query}%")
+                ->orWhere('deskripsi', 'like', "%{$query}%")
+                ->orWhere('kode_seni', 'like', "%{$query}%")
+                ->get();
+
+            return view('dashboard', compact('karyaSeni', 'query', ));
+        } elseif ($userSeniman) {
+            // Jika seniman yang login → hanya cari di karya miliknya
+            $karyaSeni = KaryaSeni::where('id_seniman', $userSeniman->id_seniman)
+                ->where(function ($q) use ($query) {
+                    $q->where('nama_karya', 'like', "%{$query}%")
+                        ->orWhere('deskripsi', 'like', "%{$query}%")
+                        ->orWhere('kode_seni', 'like', "%{$query}%");
+                })
+                ->get();
+
+            $seniman = $userSeniman;
+            return view('Seniman.dashboard', compact('karyaSeni', 'query', 'seniman'));
+        }
+
+        // Jika belum login
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+    }
+
+
 }
