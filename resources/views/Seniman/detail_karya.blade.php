@@ -19,7 +19,7 @@
     </div>
 
     <div style="flex:1; margin:0 20px;">
-         <form action="{{ route('dashboard.pembeli.search') }}" method="GET" style="display:inline;">
+         <form action="{{ route('dashboard.seniman.search') }}" method="GET" style="display:inline;">
     <input type="text" name="query" class="search-bar" placeholder="Cari karya..." value="{{ request('query') }}">
 </form>
     </div>
