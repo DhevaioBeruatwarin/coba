@@ -19,9 +19,10 @@ class DashboardSenimanController extends Controller
     public function index()
     {
         $seniman = Auth::guard('seniman')->user();
-        $karya = KaryaSeni::where('id_seniman', $seniman->id_seniman)->latest()->get();
+        $karyaSeni = KaryaSeni::latest()->get();
 
-        return view('Seniman.dashboard', compact('seniman', 'karya'));
+
+        return view('Seniman.dashboard', compact('seniman', 'karyaSeni'));
     }
 
     // Edit profil seniman

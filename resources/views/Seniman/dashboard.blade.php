@@ -48,19 +48,19 @@
         <div class="hero-image"></div>
     </div>
 
-    <!-- Section: Explore All Karya -->
+     <!-- Explore Products -->
     <div class="section-title">
-        <span>Explore karya seni di platform</span>
+        <span>Explore produk karya seni</span>
     </div>
 
     <div class="product-section">
         <div class="product-grid">
-            @if($karya->isEmpty())
-                <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Belum ada karya seni yang ditampilkan.</p>
+            @if($karyaSeni->isEmpty())
+                <p style="text-align:center; width:100%; margin-top:20px; color:gray;">Belum ada karya seni tersedia.</p>
             @else
-               <!-- Ganti bagian product-card di dashboard seniman dengan ini: -->
+              
 
-@foreach($karya as $item)
+@foreach($karyaSeni as $item)
     <a href="{{ route('karya.detail', $item->kode_seni) }}" class="product-card" style="text-decoration: none; color: inherit;">
         <div class="product-image">
             @if($item->gambar)
