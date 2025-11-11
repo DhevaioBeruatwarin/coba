@@ -54,3 +54,4 @@ Route::prefix('admin')
             return view('Admin.dashboard');
         })->name('admin.dashboard');
     });
+

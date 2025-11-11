@@ -13,7 +13,7 @@
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <div class="header-right">
-            <a href="{{ route('seniman.profil') }}" class="back-link">Kembali ke Profil</a>
+            <a href="{{ route('pembeli.profil') }}" class="back-link">Kembali ke Profil</a>
         </div>
     </header>
 
