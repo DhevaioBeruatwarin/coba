@@ -69,15 +69,68 @@
 
             <p class="description">{{ $karya->deskripsi ?? 'Tidak ada deskripsi tersedia.' }}</p>
 
-            <div class="actions">
-                <button class="btn-cart">Tambahkan ke Keranjang</button>
-                <button class="btn-buy">Beli Sekarang</button>
-            </div>
+       <div class="actions">
+    <button type="button" class="btn-cart btn btn-outline-primary" onclick="tambahKeranjang('{{ $karya->kode_seni }}', false)">
+        Tambahkan ke Keranjang
+    </button>
+
+    <button type="button" class="btn-buy btn btn-success" onclick="tambahKeranjang('{{ $karya->kode_seni }}', true)">
+        Beli Sekarang
+    </button>
+</div>
+
+<script>
+function tambahKeranjang(kodeSeni, langsungBeli) {
+    fetch(`/pembeli/keranjang/tambah/${kodeSeni}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Tambah animasi kecil
+            let notif = document.createElement('div');
+            notif.innerText = data.message;
+            notif.style.position = 'fixed';
+            notif.style.top = '20px';
+            notif.style.right = '20px';
+            notif.style.background = '#4CAF50';
+            notif.style.color = 'white';
+            notif.style.padding = '10px 20px';
+            notif.style.borderRadius = '10px';
+            notif.style.zIndex = '9999';
+            notif.style.opacity = '0.9';
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
+
+            // Update icon keranjang (kalau ada di navbar)
+            const cartCountEl = document.querySelector('#cart-count');
+            if (cartCountEl) cartCountEl.innerText = data.cart_count;
+
+            // Kalau langsung beli, arahkan ke halaman keranjang
+            if (langsungBeli) {
+                setTimeout(() => {
+                    window.location.href = '/pembeli/keranjang';
+                }, 800);
+            }
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+
         </div>
     </div>
 
     <!-- Related Products -->
-    <section class="related-products">
+    <section class="related-products">  
         <h2>Produk Lain dari Seniman Ini</h2>
         <div class="grid">
             @foreach($karyaSeniman as $item)

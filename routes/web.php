@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardSenimanController;
 use App\Http\Controllers\KaryaSeniController;
 use App\Http\Controllers\PembeliController;
 use App\Http\Controllers\SenimanController;
+use App\Http\Controllers\keranjangController;
 
 // ======================================
 // LANDING PAGE
@@ -47,6 +48,18 @@ Route::prefix('pembeli')
             Auth::guard('pembeli')->logout();
             return redirect()->route('login')->with('success', 'Berhasil logout!');
         })->name('pembeli.logout');
+
+        // Keranjang Routes
+        Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+        Route::post('/keranjang/tambah/{kode_seni}', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+        Route::get('/keranjang/count', [KeranjangController::class, 'count'])->name('keranjang.count');
+        Route::post('/keranjang/update/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
+        Route::delete('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
+        Route::post('/keranjang/hapus-bulk', [KeranjangController::class, 'hapusBulk'])->name('keranjang.hapusBulk');
+        Route::post('/keranjang/checkout', [KeranjangController::class, 'checkout'])->name('keranjang.checkout');
+
+        Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+
     });
 
 // ======================================
