@@ -56,9 +56,17 @@ Route::prefix('pembeli')
         Route::post('/keranjang/update/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
         Route::delete('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
         Route::post('/keranjang/hapus-bulk', [KeranjangController::class, 'hapusBulk'])->name('keranjang.hapusBulk');
-        Route::post('/keranjang/checkout', [KeranjangController::class, 'checkout'])->name('keranjang.checkout');
 
         Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+        // Checkout
+        Route::post('/keranjang/checkout', [KeranjangController::class, 'prepareCheckout'])
+            ->name('keranjang.checkout');
+
+        Route::get('/checkout', [KeranjangController::class, 'checkoutPreview'])
+            ->name('pembeli.checkout.preview');
+
+        Route::post('/checkout/bayar', [KeranjangController::class, 'bayar'])
+            ->name('pembeli.checkout.bayar');
 
     });
 

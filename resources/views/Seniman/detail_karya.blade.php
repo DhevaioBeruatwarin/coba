@@ -97,7 +97,7 @@ function tambahKeranjang(kodeSeni, langsungBeli) {
             notif.innerText = data.message;
             notif.style.position = 'fixed';
             notif.style.top = '20px';
-            notif.style.right = '20px';
+            notif.style.right = '25px';
             notif.style.background = '#4CAF50';
             notif.style.color = 'white';
             notif.style.padding = '10px 20px';

@@ -455,38 +455,36 @@
             }
         }
 
-        function proceedCheckout() {
-            if (selectedItems.size === 0) {
-                alert('Pilih produk untuk checkout');
-                return;
-            }
+     function proceedCheckout() {
+    if (selectedItems.size === 0) {
+        alert("Pilih dulu barang yang mau dibeli");
+        return;
+    }
 
-            if (!confirm(`Checkout ${selectedItems.size} produk?`)) {
-                return;
-            }
+    const ids = Array.from(selectedItems);
 
-            fetch('/pembeli/keranjang/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ ids: Array.from(selectedItems) })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Checkout berhasil!');
-                    location.href = "{{ route('pembeli.dashboard') }}";
-                } else {
-                    alert(data.message || 'Checkout gagal');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Terjadi kesalahan saat checkout');
-            });
+    fetch("{{ route('keranjang.checkout') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({ items: ids })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            alert("Gagal melanjutkan checkout");
         }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Terjadi kesalahan. Coba lagi.");
+    });
+}
+
     </script>
 </body>
 </html>

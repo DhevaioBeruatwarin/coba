@@ -87,7 +87,7 @@ header .search-bar {
 .price {
     font-size: 24px;
     font-weight: bold;
-    color: #4e342e;
+    color: #047218;
     margin-bottom: 10px;
 }
 
@@ -103,7 +103,7 @@ header .search-bar {
 }
 
 /* BUTTONS */
-.actions a {
+.actions button {
     padding: 12px 25px;
     border-radius: 8px;
     border: none;
@@ -188,8 +188,8 @@ header .search-bar {
 }
 
 .related-products .card .price {
-    color: #00a71f;
-    font-weight: bold;
+    color: #047218;
+    font-weight: bold;  
     font-size: 13px;
     margin: 4px 12px 12px;
 }
