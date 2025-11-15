@@ -48,10 +48,10 @@
         <div class="sidebar col-md-3">
             <h5>My Profile</h5>
             <ul>
-                <li><a href="{{ route('pembeli.profil') }}" class="active">Profil</a></li>
-                <li><a href="#">##</a></li>
-                <li><a href="{{ route('pembeli.profil.edit') }}">Edit Profil</a></li>
-                <li><a href="{{ route('pembeli.logout') }}">Keluar</a></li>
+                <li><a href="{{ route('pembeli.profil') }}" class="active">Profile</a></li>
+                <li><a href="{{ route('pembeli.myorder') }}">My Order</a></li>
+                <li><a href="{{ route('pembeli.profil.edit') }}">Edit Profile</a></li>
+                <li><a href="{{ route('pembeli.logout') }}">Log out</a></li>
             </ul>
         </div>
 

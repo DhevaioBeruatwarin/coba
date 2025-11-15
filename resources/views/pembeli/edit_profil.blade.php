@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profil</title>
-    <link rel="stylesheet" href="{{ asset('css/Seniman/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Seniman/editprofile.css') }}">
 </head>
 <body>
     <header class="seniman-header">
         <div class="header-left">
-            <div class="logo">🎨</div>
+            <div class="logo"></div>
             <div class="logo-text">JOGJA ARTSPHERE</div>
         </div>
         <div class="header-right">

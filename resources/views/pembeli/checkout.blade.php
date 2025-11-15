@@ -1,109 +1,170 @@
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Konfirmasi Pembelian - Jogja Artsphere</title>
-        <link rel="stylesheet" href="{{ asset('css/Seniman/karya/checkout.css') }}">
-    </head>
-    <body>
-        <div class="container">
-            <div class="checkout-card">
-                <div class="checkout-header">
-                    <h2>Konfirmasi Pembelian</h2>
-                    <p>Periksa kembali detail pesanan Anda</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <link rel="stylesheet" href="{{ asset('css/Seniman/karya/checkout.css') }}">
+    <title>Konfirmasi Pembelian - Jogja Artsphere</title>
+
+    <!-- Midtrans snap -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="spinner"></div>
+            <div>Memproses pembayaran...</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Konfirmasi Pembelian</h2>
+
+        <div class="checkout-layout">
+            <!-- Left Column: Address & Products -->
+            <div class="checkout-left">
+                <!-- Address Section -->
+                <div class="address-section">
+                    <h4>Alamat Pengiriman</h4>
+                    <div>{{ $pembeli->nama }} - {{ $pembeli->no_hp }}</div>
+                    <div>{{ $pembeli->alamat }}</div>
                 </div>
 
-                <div class="checkout-body">
-                    <!-- Alert Info -->
-                    <div class="alert alert-info">
-                        <span style="font-size: 20px;">ℹ️</span>
-                        <span>Pastikan alamat dan produk sudah benar sebelum melanjutkan pembayaran</span>
-                    </div>
-
-                    <!-- Alamat Pengiriman -->
-                    <div class="section">
-                        <div class="section-title">Alamat Pengiriman</div>
-                        <div class="address-box">
-                            <div class="address-row">
-                                <div class="address-label">Nama Penerima:</div>
-                                <div class="address-value">{{ $pembeli->nama }}</div>
-                            </div>
-                            <div class="address-row">
-                                <div class="address-label">No. Telepon:</div>
-                                <div class="address-value">{{ $pembeli->no_hp }}</div>
-                            </div>
-                            <div class="address-row">
-                                <div class="address-label">Alamat:</div>
-                                <div class="address-value">{{ $pembeli->alamat }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Produk yang Dibeli -->
-                    <div class="section">
-                        <div class="section-title">Produk yang Dibeli ({{ count($produk) }} item)</div>
-                        @foreach($produk as $item)
+                <!-- Products Section -->
+                <div class="product-section">
+                    <h4>Produk ({{ count($produk) }} item)</h4>
+                    @foreach($produk as $item)
                         <div class="product-item">
-                            <img src="{{ asset('storage/karya_seni/' . $item->karya->gambar) }}" 
-                                alt="{{ $item->karya->judul }}"
-                                class="product-image">
-                            <div class="product-info">
+                            <img src="{{ asset('storage/karya_seni/' . $item->karya->gambar) }}" alt="{{ $item->karya->judul }}">
+                            <div class="product-details">
                                 <div class="product-name">{{ $item->karya->judul }}</div>
-                                <div class="product-details">Kategori: {{ $item->karya->kategori ?? 'Seni Rupa' }}</div>
-                                <div class="product-details">Jumlah: {{ $item->jumlah }} pcs</div>
-                                <div class="product-details">Harga Satuan: Rp {{ number_format($item->karya->harga, 0, ',', '.') }}</div>
-                                <div class="product-price">
-                                    Subtotal: Rp {{ number_format($item->karya->harga * $item->jumlah, 0, ',', '.') }}
-                                </div>
+                                <div class="product-quantity">Jumlah: {{ $item->jumlah }} × Rp {{ number_format($item->karya->harga,0,',','.') }}</div>
+                                <div class="product-price">Rp {{ number_format($item->karya->harga * $item->jumlah,0,',','.') }}</div>
                             </div>
                         </div>
-                        @endforeach
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Right Column: Summary & Buttons -->
+            <div class="checkout-right">
+                <div class="summary-section">
+                    <h4>Ringkasan Pesanan</h4>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>Rp {{ number_format($total,0,',','.') }}</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span class="summary-total-label">Total</span>
+                        <span class="summary-total-value">Rp {{ number_format($total,0,',','.') }}</span>
                     </div>
 
-                    <!-- Ringkasan Pembayaran -->
-                    <div class="summary-box">
-                        <div class="summary-row">
-                            <span>Subtotal ({{ count($produk) }} produk):</span>
-                            <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Biaya Admin:</span>
-                            <span>Rp 0</span>
-                        </div>
-                        <div class="summary-total">
-                            <span>Total Pembayaran:</span>
-                            <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Form Pembayaran -->
-                    <form method="POST" action="{{ route('pembeli.checkout.bayar') }}" id="checkoutForm">
+                    <!-- Form -->
+                    <form id="checkoutForm" method="POST" action="{{ route('pembeli.checkout.bayar') }}">
                         @csrf
-                        
                         @foreach($ids as $id)
-                            <input type="hidden" name="ids[]" value="{{ $id }}">
+                            <input type="hidden" name="ids[]" value="{{ $id }}" />
                         @endforeach
 
-                        <div class="btn-container">
+                        <div class="button-container">
+                            <button type="submit" id="btnBayar" class="btn btn-primary">
+                                Bayar Sekarang
+                            </button>
                             <a href="{{ route('keranjang.index') }}" class="btn btn-secondary">
                                 Kembali ke Keranjang
                             </a>
-                            <button type="submit" class="btn btn-primary" id="btnBayar">
-                                Bayar Sekarang
-                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-                const btn = document.getElementById('btnBayar');
-                btn.disabled = true;
-                btn.textContent = 'Memproses...';
+    <script>
+    (function(){
+        const form = document.getElementById('checkoutForm');
+        const btn = document.getElementById('btnBayar');
+        const overlay = document.getElementById('loadingOverlay');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+
+            const ids = Array.from(form.querySelectorAll('input[name="ids[]"]')).map(i => i.value);
+
+            if (!ids.length) {
+                alert('Tidak ada produk yang dipilih');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Memproses...';
+            overlay.classList.add('active');
+
+            fetch("{{ route('pembeli.checkout.bayar') }}", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ ids: ids })
+            })
+            .then(async res => {
+                const contentType = res.headers.get('content-type') || '';
+                let payload = null;
+                if (contentType.includes('application/json')) payload = await res.json();
+                else payload = { success:false, message: await res.text() };
+
+                if (!res.ok) {
+                    throw payload;
+                }
+                return payload;
+            })
+            .then(data => {
+                if (!data.success) throw data;
+
+                const snapToken = data.snap_token;
+                const orderId = data.order_id;
+
+                if (!snapToken) throw { message: 'Snap token tidak ditemukan dari server' };
+
+                snap.pay(snapToken, {
+                    onSuccess: function(result){
+                        window.location.href = '/pembeli/payment/success?order_id=' + encodeURIComponent(orderId);
+                    },
+                    onPending: function(result){
+                        alert('Pembayaran pending. Selesaikan pembayaran sesuai instruksi.');
+                        window.location.href = '/pembeli/payment/success?order_id=' + encodeURIComponent(orderId);
+                    },
+                    onError: function(result){
+                        alert('Terjadi kesalahan saat membuka metode pembayaran. Coba lagi.');
+                        btn.disabled = false;
+                        btn.textContent = 'Bayar Sekarang';
+                        overlay.classList.remove('active');
+                    },
+                    onClose: function(){
+                        btn.disabled = false;
+                        btn.textContent = 'Bayar Sekarang';
+                        overlay.classList.remove('active');
+                        alert('Popup pembayaran ditutup. Silakan coba lagi jika ingin membayar.');
+                    }
+                });
+            })
+            .catch(err => {
+                console.error('Payment error', err);
+                const msg = (err && err.message) ? err.message : 'Gagal membuat pembayaran';
+                alert(msg);
+                btn.disabled = false;
+                btn.textContent = 'Bayar Sekarang';
+                overlay.classList.remove('active');
             });
-        </script>
-    </body>
-    </html>
+        });
+    })();
+    </script>
+</body>
+</html>
