@@ -65,37 +65,37 @@ class KeranjangController extends Controller
         return back()->with('success', 'Produk berhasil dihapus dari keranjang.');
     }
 
-    public function checkout(Request $request)
-    {
-        $pembeliId = Auth::guard('pembeli')->id();
+    // public function checkout(Request $request)
+    // {
+    //     $pembeliId = Auth::guard('pembeli')->id();
 
-        if (empty($request->ids)) {
-            return response()->json(['success' => false, 'message' => 'Pilih produk terlebih dahulu'], 400);
-        }
+    //     if (empty($request->ids)) {
+    //         return response()->json(['success' => false, 'message' => 'Pilih produk terlebih dahulu'], 400);
+    //     }
 
-        $selectedItems = Keranjang::whereIn('id_keranjang', $request->ids)
-            ->where('id_pembeli', $pembeliId)
-            ->with('karya')
-            ->get();
+    //     $selectedItems = Keranjang::whereIn('id_keranjang', $request->ids)
+    //         ->where('id_pembeli', $pembeliId)
+    //         ->with('karya')
+    //         ->get();
 
-        if ($selectedItems->isEmpty()) {
-            return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan'], 404);
-        }
+    //     if ($selectedItems->isEmpty()) {
+    //         return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan'], 404);
+    //     }
 
-        foreach ($selectedItems as $item) {
-            Transaksi::create([
-                'id_pembeli' => $pembeliId,
-                'kode_seni' => $item->kode_seni,
-                'tanggal_jual' => now(),
-                'harga' => $item->karya->harga * $item->jumlah,
-                'jumlah' => $item->jumlah
-            ]);
+    //     foreach ($selectedItems as $item) {
+    //         Transaksi::create([
+    //             'id_pembeli' => $pembeliId,
+    //             'kode_seni' => $item->kode_seni,
+    //             'tanggal_jual' => now(),
+    //             'harga' => $item->karya->harga * $item->jumlah,
+    //             'jumlah' => $item->jumlah
+    //         ]);
 
-            $item->delete();
-        }
+    //         $item->delete();
+    //     }
 
-        return response()->json(['success' => true, 'message' => 'Checkout berhasil!']);
-    }
+    //     return response()->json(['success' => true, 'message' => 'Checkout berhasil!']);
+    // }
 
     public function update(Request $request, $id)
     {
@@ -113,4 +113,145 @@ class KeranjangController extends Controller
             'new_subtotal' => $newSubtotal
         ]);
     }
+
+    public function prepareCheckout(Request $request)
+    {
+        if (!$request->items || count($request->items) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pilih produk dahulu'
+            ], 400);
+        }
+
+        session(['checkout_items' => $request->items]);
+
+        return response()->json([
+            'success' => true,
+            'redirect' => route('pembeli.checkout.preview')
+        ]);
+    }
+
+    public function checkoutPreview()
+    {
+        $pembeli = Auth::guard('pembeli')->user();
+        $ids = session('checkout_items', []);
+
+        if (empty($ids)) {
+            return redirect()->route('keranjang.index')
+                ->with('error', 'Tidak ada produk yang dipilih');
+        }
+
+        $produk = Keranjang::with('karya')
+            ->whereIn('id_keranjang', $ids)
+            ->where('id_pembeli', $pembeli->id_pembeli)
+            ->get();
+
+        if ($produk->isEmpty()) {
+            return redirect()->route('keranjang.index')
+                ->with('error', 'Produk tidak ditemukan');
+        }
+
+        $total = 0;
+        foreach ($produk as $item) {
+            $total += $item->karya->harga * $item->jumlah;
+        }
+
+        return view('pembeli.checkout', [
+            'pembeli' => $pembeli,
+            'produk' => $produk,
+            'total' => $total,
+            'ids' => $ids
+        ]);
+    }
+
+    public function bayar(Request $request)
+    {
+        $pembeli = Auth::guard('pembeli')->user();
+        $ids = $request->ids;
+
+        if (empty($ids)) {
+            return redirect()->route('keranjang.index')
+                ->with('error', 'Tidak ada produk yang dipilih');
+        }
+
+        $items = Keranjang::with('karya')
+            ->whereIn('id_keranjang', $ids)
+            ->where('id_pembeli', $pembeli->id_pembeli)
+            ->get();
+
+        if ($items->isEmpty()) {
+            return redirect()->route('keranjang.index')
+                ->with('error', 'Produk tidak ditemukan');
+        }
+
+        // Proses transaksi
+        foreach ($items as $item) {
+            // Cek stok
+            if ($item->karya->stok < $item->jumlah) {
+                return redirect()->route('keranjang.index')
+                    ->with('error', 'Stok ' . $item->karya->judul . ' tidak mencukupi');
+            }
+
+            // Buat transaksi
+            Transaksi::create([
+                'id_pembeli' => $pembeli->id_pembeli,
+                'kode_seni' => $item->kode_seni,
+                'tanggal_jual' => now(),
+                'harga' => $item->karya->harga * $item->jumlah,
+                'jumlah' => $item->jumlah,
+                'status' => 'pending' // Opsional: tambahkan status
+            ]);
+
+            // Kurangi stok
+            $karya = $item->karya;
+            $karya->stok -= $item->jumlah;
+            $karya->save();
+
+            // Hapus dari keranjang
+            $item->delete();
+        }
+
+        // Hapus session
+        session()->forget('checkout_items');
+
+        return redirect()->route('pembeli.dashboard')
+            ->with('success', 'Pembelian berhasil! Terima kasih sudah berbelanja.');
+    }
+
+    // ===========================
+// HALAMAN KONFIRMASI / CHECKOUT PREVIEW
+// // ===========================
+//     public function checkoutPreview()
+//     {
+//         $pembeli = Auth::guard('pembeli')->user();
+
+    //         $ids = session('checkout_items', []);
+
+    //         if (empty($ids)) {
+//             return redirect()->route('keranjang.index')
+//                 ->with('error', 'Tidak ada produk yang dipilih');
+//         }
+
+    //         $produk = Keranjang::with('karya')
+//             ->whereIn('id_keranjang', $ids)
+//             ->where('id_pembeli', $pembeli->id_pembeli)
+//             ->get();
+
+    //         if ($produk->isEmpty()) {
+//             return redirect()->route('keranjang.index')
+//                 ->with('error', 'Produk tidak ditemukan');
+//         }
+
+    //         $total = 0;
+//         foreach ($produk as $item) {
+//             $total += $item->karya->harga * $item->jumlah;
+//         }
+
+    //         return view('pembeli.checkout', [
+//             'pembeli' => $pembeli,
+//             'produk' => $produk,
+//             'total' => $total
+//         ]);
+//     }
+
 }
