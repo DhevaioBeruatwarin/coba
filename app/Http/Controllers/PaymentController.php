@@ -221,15 +221,25 @@ class PaymentController extends Controller
                     $karya->stok -= $t->jumlah;
                     $karya->save();
                 }
+                if (!empty($cartIds)) {
+                    Keranjang::whereIn('id_keranjang', $cartIds)->delete();
+                }
+
+
+
             }
 
             $t->save();
         }
 
-        // Hapus keranjang jika sukses
         if ($status === 'success') {
             $cartIds = session('payment_data.cart_ids', []);
-            Keranjang::whereIn('id_keranjang', $cartIds)->delete();
+
+            if (!empty($cartIds)) {
+                Keranjang::whereIn('id_keranjang', $cartIds)->delete();
+            }
+
+            // Hapus session
             session()->forget(['checkout_items', 'payment_data']);
         }
 
