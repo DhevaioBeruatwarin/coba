@@ -25,7 +25,7 @@
     </div>
 
     <div style="display:flex; align-items:center; gap:15px;">
-        <button style="font-size:18px; background:none; border:none; cursor:pointer; color:#fff;">🛒</button>
+        <a href="{{ route('keranjang.index') }}" class="icon-btn">🛒</a>
         @php
             $pembeli = Auth::guard('pembeli')->user();
             $fotoPath = $pembeli->foto 
@@ -172,7 +172,7 @@ function tambahKeranjang(kodeSeni, langsungBeli) {
 
     <script>
         function changeImage(thumb) {
-            document.getElementById('mainImg').src = thumb.src;
+            document.getElementById('mainImg').src = thumb.src; 
         }
     </script>
 </body>

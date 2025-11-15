@@ -220,7 +220,7 @@
                                    data-qty="{{ $item->jumlah }}"
                                    onchange="updateTotal()">
                             
-                            <img src="{{ asset('storage/'.$item->karya->gambar) }}" 
+                            <img src="{{ asset('storage/karya_seni/'.$item->karya->gambar) }}" 
                                  alt="{{ $item->karya->judul }}" 
                                  class="item-image">
                             
@@ -265,11 +265,6 @@
 
                     <!-- Bulk Actions -->
                     <div class="bulk-actions">
-                        <div class="bulk-left">
-                            <input type="checkbox" id="selectAllBottom" onchange="toggleSelectAll()">
-                            <label for="selectAllBottom">Pilih Semua</label>
-                            <button class="btn-bulk-delete" onclick="deleteSelected()">Hapus</button>
-                        </div>
                         <div class="bulk-right">
                             <a href="{{ route('pembeli.dashboard') }}" class="btn-continue-shopping">Lanjut Belanja</a>
                         </div>

@@ -22,6 +22,20 @@ header .logo-text {
     letter-spacing: 1px;
 }
 
+header .icon-btn{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
 header .logo {
     width: 40px;
     height: 40px;
@@ -98,6 +112,8 @@ header .search-bar {
     margin-right: 10px;
     text-decoration: none;
 }
+
+
 
 .btn-cart { background-color: #ff7a00; color: #fff; }
 .btn-cart:hover { background-color: #ff891a; }

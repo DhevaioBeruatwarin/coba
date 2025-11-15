@@ -29,7 +29,7 @@
         $pembeli = Auth::guard('pembeli')->user();
         $fotoPath = $pembeli->foto 
             ? asset('storage/foto_pembeli/' . $pembeli->foto)
-            : asset('assets/defaultprofile.png'); // pastikan file default ada
+            : asset('assets/defaultprofile.png'); 
     @endphp
 
     <a href="{{ route('pembeli.profil') }}" title="Profil">
