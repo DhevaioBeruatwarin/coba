@@ -23,13 +23,13 @@
 
         <div class="header-right">
             <button class="icon-btn" id="camera-btn">📷</button>
-            <button class="icon-btn">🛒</button>
+            <a href="keranjang" class="icon-btn">🛒</a>
                    @if(\Illuminate\Support\Facades\Auth::guard('pembeli')->check())
     @php
         $pembeli = Auth::guard('pembeli')->user();
         $fotoPath = $pembeli->foto 
             ? asset('storage/foto_pembeli/' . $pembeli->foto)
-            : asset('assets/defaultprofile.png'); // pastikan file default ada
+            : asset('assets/defaultprofile.png'); 
     @endphp
 
     <a href="{{ route('pembeli.profil') }}" title="Profil">
