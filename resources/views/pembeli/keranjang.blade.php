@@ -332,16 +332,18 @@
     <script>
         let selectedItems = new Set();
 
-        function toggleSelectAll() {
+      function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll').checked;
-            document.getElementById('selectAllBottom').checked = selectAll;
+            
+            // Clear selected items jika uncheck
+            if (!selectAll) {
+                selectedItems.clear();
+            }
             
             document.querySelectorAll('.item-checkbox').forEach(checkbox => {
                 checkbox.checked = selectAll;
                 if (selectAll) {
                     selectedItems.add(checkbox.dataset.id);
-                } else {
-                    selectedItems.clear();
                 }
             });
             
