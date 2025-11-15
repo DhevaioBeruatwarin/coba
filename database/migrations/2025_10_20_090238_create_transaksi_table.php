@@ -12,10 +12,16 @@ return new class extends Migration {
     {
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id('no_transaksi'); // primary key
+            $table->string('order_id')->unique(); // untuk Midtrans
+            $table->string('snap_token')->nullable(); // token dari Midtrans
             $table->date('tanggal_jual');
             $table->string('kode_seni', 20);
             $table->decimal('harga', 15, 2);
+            $table->integer('jumlah')->default(1); // jumlah item dibeli
             $table->unsignedBigInteger('id_pembeli');
+            $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
+            $table->string('payment_type')->nullable(); // jenis pembayaran (VA, gopay, dll)
+            $table->timestamp('paid_at')->nullable(); // kapan dibayar
             $table->timestamps();
 
             // foreign keys
