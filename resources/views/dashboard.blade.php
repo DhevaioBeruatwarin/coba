@@ -46,9 +46,11 @@
     <div class="hero-banner">
         <div class="hero-content">
             <h1 class="hero-title">Yuk belanja di Jogja Artsphere</h1>
-            <p class="hero-subtitle">Temukan koleksi kerajinan tangan dan seni budaya dari Yogyakarta.</p>
+            <p class="hero-subtitle">Jelajahi koleksi terbaru dan favorit dari seniman Jogja. Pilih, klik, dan bawa pulang inspirasi!</p>
         </div>
-        <div class="hero-image"></div>
+        <div class="hero-image">
+            <img src="{{ asset('assets/logo.png') }}" alt="" class="logo1"> 
+        </div>
     </div>
 
     <!-- Explore Products -->
