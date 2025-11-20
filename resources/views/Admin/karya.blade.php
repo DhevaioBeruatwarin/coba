@@ -28,7 +28,7 @@
                 <td>{{ $k->id_seniman }}</td>
                 <td>
                     @if($k->gambar)
-                        <img src="{{ asset('storage/karya/' . $k->gambar) }}" class="img-preview">
+                        <img src="{{ asset('storage/karya_seni/' . $k->gambar) }}" class="karya-img">
                     @else
                         -
                     @endif

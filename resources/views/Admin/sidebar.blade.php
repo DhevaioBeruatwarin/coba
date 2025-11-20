@@ -96,6 +96,18 @@
     border-bottom: 1px solid #eee;
 }
 
+.img-preview,
+.karya-img,
+.admin-table td img {
+    width: 100vhpx !important;
+    height: 80px !important;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+
+
 .btn-delete {
     background: #d9534f;
     color: white;
@@ -134,7 +146,7 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="col-md-8 content">
+    <div class="col-md-9 content">
         @yield('content')
     </div>
 

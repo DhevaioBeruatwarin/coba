@@ -13,10 +13,7 @@
     {{-- Sidebar --}}
     @include('Admin.sidebar')
 
-    {{-- Content --}}
-    <div class="content">
-        @yield('content')
-    </div>
+  
 
 </body>
 </html>
