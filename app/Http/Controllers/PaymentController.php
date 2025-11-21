@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Models\Keranjang;
 use App\Models\KaryaSeni;
 use App\Models\Transaksi;
@@ -50,7 +51,9 @@ class PaymentController extends Controller
 
         $total = 0;
         foreach ($produk as $item) {
-            $total += $item->karya->harga * $item->jumlah;
+            $harga = (int) ($item->karya->harga ?? 0);
+            $jumlah = (int) $item->jumlah;
+            $total += $harga * $jumlah;
         }
 
         return view('pembeli.checkout', [
@@ -63,89 +66,104 @@ class PaymentController extends Controller
 
     public function bayar(Request $request)
     {
+        $pembeli = Auth::guard('pembeli')->user();
+        $ids = $request->input('ids', []);
+
+        if (!$ids || count($ids) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada produk yang dipilih'
+            ], 400);
+        }
+
+        $items = Keranjang::with('karya')
+            ->whereIn('id_keranjang', $ids)
+            ->where('id_pembeli', $pembeli->id_pembeli)
+            ->get();
+
+        if ($items->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Produk tidak ditemukan'
+            ], 404);
+        }
+
+        $orderId = 'ORDER-' . $pembeli->id_pembeli . '-' . time() . '-' . rand(100, 999);
+
+        $totalAmount = 0;
+        $itemDetails = [];
+        $transaksiIds = [];
+
+        DB::beginTransaction();
         try {
-            $pembeli = Auth::guard('pembeli')->user();
-            $ids = $request->input('ids', []);
-
-            if (!$ids || count($ids) === 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tidak ada produk yang dipilih'
-                ], 400);
-            }
-
-            $items = Keranjang::with('karya')
-                ->whereIn('id_keranjang', $ids)
-                ->where('id_pembeli', $pembeli->id_pembeli)
-                ->get();
-
-            if ($items->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Produk tidak ditemukan'
-                ], 404);
-            }
-
-            // ORDER ID
-            $orderId = 'ORDER-' . $pembeli->id_pembeli . '-' . time();
-
-            $totalAmount = 0;
-            $itemDetails = [];
-            $transaksiIds = [];
-
             foreach ($items as $item) {
 
-                // FIX: fallback judul jika null
-                $namaProduk = $item->karya->judul ?? "Produk Seni";
+                $karya = $item->karya;
+                $quantity = (int) $item->jumlah;
 
-                // FIX: fallback harga jika null
-                $harga = (int) ($item->karya->harga ?? 0);
+                // ========= CEK STOK DISINI =========
+                if ($karya->stok < $quantity) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok '{$karya->nama_karya}' tidak cukup. Sisa stok: {$karya->stok}"
+                    ], 400);
+                }
 
-                // subtotal tetap harga * qty
-                $subtotal = $harga * (int) $item->jumlah;
+                $namaProduk = $karya->nama_karya ?? "Produk Seni";
+                $harga = (int) ($karya->harga ?? 0);
+
+                $subtotal = $harga * $quantity;
                 $totalAmount += $subtotal;
 
-                // Simpan transaksi pending
                 $transaksi = Transaksi::create([
                     'order_id' => $orderId,
                     'id_pembeli' => $pembeli->id_pembeli,
                     'kode_seni' => $item->kode_seni,
                     'tanggal_jual' => now(),
                     'harga' => $subtotal,
-                    'jumlah' => $item->jumlah,
+                    'jumlah' => $quantity,
                     'status' => 'pending'
                 ]);
 
                 $transaksiIds[] = $transaksi->no_transaksi;
 
-                // FIX: item_details tidak akan error lagi
                 $itemDetails[] = [
-                    'id' => $item->karya->kode_seni ?? 'ITEM-' . rand(100, 999),
+                    'id' => $karya->kode_seni ?? 'ITEM-' . rand(100, 999),
                     'price' => $harga,
-                    'quantity' => (int) $item->jumlah,
+                    'quantity' => $quantity,
                     'name' => substr($namaProduk, 0, 50)
                 ];
             }
 
-            // Customer
+            if ($totalAmount <= 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Total pembayaran tidak valid.'
+                ], 400);
+            }
+
             $customerDetails = [
-                'first_name' => $pembeli->nama ?? "Pembeli",
-                'email' => $pembeli->email ?? 'noemail@example.com',
-                'phone' => $pembeli->no_hp ?? '0000000000',
+                'first_name' => $pembeli->nama ?: 'Pembeli',
+                'email' => $pembeli->email ?: 'noemail@example.com',
+                'phone' => $pembeli->no_hp ?: '0000000000',
             ];
 
-            // Generate Midtrans
             $midtrans = new \App\Services\MidtransService();
-            $snapToken = $midtrans->createTransaction(
-                $orderId,
-                (int) $totalAmount,
-                $customerDetails,
-                $itemDetails
-            );
+            $snapToken = $midtrans->createTransaction($orderId, (int) $totalAmount, $customerDetails, $itemDetails);
 
-            // Update transaksi
-            Transaksi::whereIn('no_transaksi', $transaksiIds)
-                ->update(['snap_token' => $snapToken]);
+            if (!$snapToken) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token pembayaran tidak bisa dibuat.'
+                ], 500);
+            }
+
+            Transaksi::whereIn('no_transaksi', $transaksiIds)->update(['snap_token' => $snapToken]);
+
+            DB::commit();
 
             session([
                 'payment_data' => [
@@ -163,14 +181,17 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            DB::rollBack();
 
-            if (isset($transaksiIds)) {
+            if (!empty($transaksiIds)) {
                 Transaksi::whereIn('no_transaksi', $transaksiIds)->delete();
             }
 
+            Log::error($e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat pembayaran: ' . $e->getMessage()
+                'message' => 'Gagal membuat pembayaran.'
             ], 500);
         }
     }
@@ -179,10 +200,9 @@ class PaymentController extends Controller
     {
         $orderId = $request->order_id;
         $statusCode = $request->status_code;
-        $grossAmount = $request->gross_amount;
+        $grossAmount = (int) $request->gross_amount;
 
-        // Verifikasi signature
-        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $serverKey = trim(env('MIDTRANS_SERVER_KEY'));
         $signatureKey = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
 
         if ($signatureKey !== $request->signature_key) {
@@ -195,18 +215,16 @@ class PaymentController extends Controller
         $transaksi = Transaksi::where('order_id', $orderId)->get();
 
         if ($transaksi->isEmpty()) {
-            return response()->json(['message' => 'Transaction not found'], 404);
+            return response()->json(['message' => 'Not found'], 404);
         }
 
         $status = 'pending';
-
-        if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
+        if ($transactionStatus == 'capture' || $transactionStatus == 'settlement')
             $status = 'success';
-        } else if ($transactionStatus == 'pending') {
-            $status = 'pending';
-        } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
+        if (in_array($transactionStatus, ['deny', 'expire', 'cancel']))
             $status = 'failed';
-        }
+
+        $cartIds = session('payment_data.cart_ids', []);
 
         foreach ($transaksi as $t) {
             $t->status = $status;
@@ -215,35 +233,22 @@ class PaymentController extends Controller
             if ($status === 'success') {
                 $t->paid_at = now();
 
-                // Kurangi stok
                 $karya = KaryaSeni::where('kode_seni', $t->kode_seni)->first();
                 if ($karya) {
-                    $karya->stok -= $t->jumlah;
+                    $karya->stok = max(0, $karya->stok - $t->jumlah);
                     $karya->save();
                 }
-                if (!empty($cartIds)) {
-                    Keranjang::whereIn('id_keranjang', $cartIds)->delete();
-                }
-
-
-
             }
 
             $t->save();
         }
 
-        if ($status === 'success') {
-            $cartIds = session('payment_data.cart_ids', []);
-
-            if (!empty($cartIds)) {
-                Keranjang::whereIn('id_keranjang', $cartIds)->delete();
-            }
-
-            // Hapus session
+        if ($status === 'success' && !empty($cartIds)) {
+            Keranjang::whereIn('id_keranjang', $cartIds)->delete();
             session()->forget(['checkout_items', 'payment_data']);
         }
 
-        return response()->json(['message' => 'Transaction status updated']);
+        return response()->json(['message' => 'OK']);
     }
 
     public function paymentSuccess(Request $request)
@@ -256,33 +261,23 @@ class PaymentController extends Controller
             ->get();
 
         if ($transaksi->isEmpty()) {
-            return redirect()->route('pembeli.dashboard')
-                ->with('error', 'Transaksi tidak ditemukan');
+            return redirect()->route('pembeli.dashboard')->with('error', 'Transaksi tidak ditemukan');
         }
 
         $total = $transaksi->sum('harga');
 
-        return view('pembeli.payment-succsess', [
-            'transaksi' => $transaksi,
-            'orderId' => $orderId,
-            'total' => $total
-        ]);
+        return view('pembeli.payment-succsess', compact('transaksi', 'orderId', 'total'));
     }
-
-    // Tambahkan method ini di PaymentController.php atau buat OrderController baru
 
     public function myOrders()
     {
         $pembeli = Auth::guard('pembeli')->user();
 
-        // Ambil semua transaksi pembeli, diurutkan dari yang terbaru
         $orders = Transaksi::with('karya')
             ->where('id_pembeli', $pembeli->id_pembeli)
             ->orderBy('tanggal_jual', 'desc')
             ->get();
 
-        return view('pembeli.myorder', [
-            'orders' => $orders
-        ]);
+        return view('pembeli.myorder', compact('orders'));
     }
 }
